@@ -1,0 +1,9692 @@
+Description: R:\DocDept\Documentation Team Info\Logos\Fiserv Logos\fiserv_logo_orange_rgb.jpg 
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+Statement Extract (MM_STMXT) Batch 
+Application 
+
+(current as of DNA 4.4.1.0) 
+
+ 
+
+Revision Date 
+
+Description of Change 
+
+7-22-14 
+
+Added Full Check Number field with a 22-character limit to the following 
+records: 
+
+• Deposit Account Transaction Detail (2500) record, at position 371 
+• Checking Detail Transaction (3000) record, at position 102 
+• Check Image (3050) record, at position 82 
+• Loan Detail Transaction (4100) record, at position 355 
+• Master Line Sub-Loan Detail Transaction (4600) record, at position 372 
+
+
+8-22-14 
+
+Clarified the creation and use of the Statement Delivery Code user field in 
+the Introduction. 
+
+8-26-14 
+
+Removed references to inactivating the existing Check Number field with 
+the installation of DNA 4.1 from the 2500, 3000, 3050, 4100, and 4600 
+records. The Check Number field will remain active even after DNA 4.1 is 
+installed. 
+
+10-1-14 
+
+For Canadian institutions only. Added the Language Code (LCODE) field to 
+the Statement Date (0000) record and the Language Format (LANG) 
+parameter to the report. DNA MCE 4.0.6 must be installed. 
+
+3-2-15 
+
+Added the Service Charge Waiver Detail (SCWD) variable to the Statement 
+(STMT) Calculation Type table in the Variables Used with MM_STMXT 
+section. 
+
+
+
+
+Revision Date 
+
+Description of Change 
+
+3-15-16 
+
+Added the Include 1020/1025 Record Types (PO14) variable to the 
+Statement Processing (STPR) Calculation Type table in the Variables Used 
+with MM_STMXT section. 
+
+Added the Account Owner Name and Address (1020) and Account Owner 
+ZIP Code (1025) records to the Statement Extract (MM_STMXT.TXT) 
+Record Layouts section. 
+
+8-9-16 
+
+Removed the requirement of an authorization key. DNA 4.2.3.0 must be 
+installed. 
+
+4-6-17 
+
+Updated descriptions for the Average Daily Balance, Number of Days, and 
+APR for Rate fields in both the Loan Account Summary (4000) and Master 
+Line Sub-Loan Account Summary (4500) records. 
+
+In both the Loan Account Interest Summary (4050) and Master Line Sub-
+Loan Account Interest Summary (4550) records, changed the Annual 
+Percentage Rate field name to Interest Rate. 
+
+7-13-17 
+
+When the number of primary accounts processed and number of 
+statements generated are not the same, the excluded accounts are 
+displayed at the end of the LIS file with an activity error message. DNA 
+4.3.2.0 must be installed. 
+
+11-27-17 
+
+Added the Statement Extract with Dodd-Frank Bill Records 
+(MM_STMXT_DFBILLRECS) report, which is run as a post-process of 
+MM_STMXT. 
+
+
+
+
+© 2018 Fiserv, Inc. or its affiliates. All rights reserved. This work is confidential and its 
+use is strictly limited. Use is permitted only in accordance with the terms of the 
+agreement under which it was furnished. Any other use, duplication, or dissemination 
+without the prior written consent of Fiserv, Inc. or its affiliates is strictly prohibited. The 
+information contained herein is subject to change without notice. Except as specified by 
+the agreement under which the materials are furnished, Fiserv, Inc. and its affiliates do 
+not accept any liabilities with respect to the information contained herein and are not 
+responsible for any direct, indirect, special, consequential or exemplary damages 
+resulting from the use of this information. No warranties, either express or implied, are 
+granted or extended by this document. 
+
+ 
+
+
+Table of Contents 
+Introduction ................................................................................................................. 7 
+Overview ................................................................................................................. 7 
+Post-Process Report for Dodd-Frank Accounts ....................................................... 7 
+Records ................................................................................................................... 7 
+Transaction Reporting Groups ................................................................................. 9 
+Service Charge vs. Relational Pricing ...................................................................... 9 
+Cycle Changes ........................................................................................................ 9 
+Statement Delivery Code User Field ........................................................................ 9 
+MM_STMXT and Reg E Statements ...................................................................... 10 
+Variables Used with MM_STMXT .............................................................................. 12 
+Overview ............................................................................................................... 12 
+Overrides ............................................................................................................... 12 
+Statement (STMT) Calculation Type ...................................................................... 12 
+Statement Processing (STPR) Calculation Type.................................................... 15 
+Loan Bill (BILL) Calculation Type ........................................................................... 17 
+Regulation DD STMT Section Control (RDCS) Calculation Type ........................... 20 
+Avg Neg Collected Balance Service Charge (VAAP) Product-Level Calculation 
+Type ...................................................................................................................... 20 
+Negative Amortization (NGAM) Product-Level Calculation Type ............................ 20 
+Required Available Balance (URBA) Product-Level Calculation Type .................... 20 
+Regulatory - US (RGUS) Product-Level Calculation Type ..................................... 21 
+Reg Z Reportable Balance (RGZB) Product-Level Calculation Type ..................... 21 
+Statement Extract (MM_STMXT) Report ................................................................... 22 
+Description ............................................................................................................ 22 
+Parameters ............................................................................................................ 22 
+Operation .............................................................................................................. 26 
+Output ................................................................................................................... 26 
+Statement Extract (MM_STMXT.TXT) Record Layouts ............................................. 27 
+Overview ............................................................................................................... 27 
+Statement Date (0000) Record .............................................................................. 28 
+New Account (0001) Record .................................................................................. 29 
+Name and Address (1000) Record ........................................................................ 30 
+ZIP Code (1005) Record ........................................................................................ 31 
+Electronic Address (1008) Record ......................................................................... 31 
+End of Name and Address (1010) Record ............................................................. 33 
+Account Owner Name and Address (1020) Record ............................................... 33 
+Account Owner ZIP Code (1025) Record............................................................... 34 
+Branch Address (1050) Record ............................................................................. 34 
+Branch Zip Code (1055) Record ............................................................................ 35 
+Branch End of Address (1060) Record .................................................................. 35 
+Statement Summary (1500) Record ...................................................................... 36 
+Deposit Account Summary (2000) Record ............................................................. 37 
+Account Interest (2250) Record ............................................................................. 39 
+Account Interest Detail (2255) Record ................................................................... 40 
+Reg DD Fee Summary (2260) Record ................................................................... 40 
+Deposit Account Transaction Detail (2500) Record ............................................... 41 
+Checking Detail Transaction (3000) Record .......................................................... 43 
+Check Image (3050) Record .................................................................................. 44 
+ATM Detail Transaction (3100) Record .................................................................. 44 
+Service Charge Transaction (3200) Record ........................................................... 45 
+Account Balance (3300) Record ............................................................................ 46 
+Automated Settlement Transactions (3500) Record .............................................. 46 
+Loan Account Summary (4000) Record ................................................................. 47 
+Loan Account Interest Summary (4050) Record .................................................... 53 
+Loan Detail Transaction (4100) Record ................................................................. 53 
+Loan Return Payment Address (4125) Record ...................................................... 55 
+Historical APR (4150) Record ................................................................................ 55 
+Loan Account Reg Z Information (4175) Record .................................................... 56 
+Master Line Sub-Loan Account Summary (4500) Record ...................................... 56 
+Master Line Sub-Loan Account Interest Summary (4550) Record ......................... 61 
+Master Line Sub-Loan Account Reg Z Information (4575) Record ......................... 62 
+Master Line Sub-Loan Detail Transaction (4600) Record ...................................... 63 
+Account Trailer (8000) Record ............................................................................... 64 
+Statement Trailer (8900) Record ........................................................................... 65 
+File Control (9000) Record .................................................................................... 65 
+End of File (9999) Record ...................................................................................... 65 
+Statement Extract with Dodd-Frank Bill Records (MM_STMXT_DFBILLRECS) Report 
+.................................................................................................................................. 66 
+Description ............................................................................................................ 66 
+Restrictions ............................................................................................................ 66 
+Variables ............................................................................................................... 66 
+Parameters ............................................................................................................ 68 
+Operation .............................................................................................................. 68 
+Output ................................................................................................................... 68 
+Statement Extract Record Layouts ........................................................................ 69 
+
+Introduction 
+
+Overview 
+
+The Statement Extract (MM_STMXT) batch application generates an extract file with 
+comprehensive information for statements. In addition to standard statement information, 
+the MM_STMXT produces information for new accounts, additional credit line and 
+allotment information in the Loan Account Summary record, and master line sub loan 
+records. The extract is comprised of several fixed length record types for ease of 
+printing. 
+
+Variables located under the following calculation types control the type of information 
+included in the extract: 
+
+• Statement 
+• Statement Processing 
+• Loan Bill 
+• Required Available Balance 
+• Avg Neg Collected Balance Service Charge 
+• Negative Amortization 
+
+
+These variables are described in the Variables Used with MM_STMXT section of this 
+document. 
+
+Detailed information on running the report, including its parameters, is included in the 
+Statement Extract (MM_STMXT) Report section of this document. 
+
+The output is described in the Statement Extract (MM_STMXT) Record Layouts section 
+of this document. 
+
+Post-Process Report for Dodd-Frank Accounts 
+
+The Statement Extract with Dodd-Frank Bill Records (MM_STMXT_DFBILLRECS) 
+report generates an extract file to provide additional records containing the information 
+required in statements as a result of the Dodd-Frank Act and CFPB rules. This report is 
+run as a post-process of MM_STMXT and provides the information for loans in 
+product(s) with the Dodd Frank Mortgage Indicator (DFMI) variable set to Y. 
+
+Detailed information on running the report, including its parameters, is included in the 
+Statement Extract with Dodd-Frank Bill Records (MM_STMXT_DFBILLRECS) Report 
+section of this document. 
+
+Records 
+
+The following records are available with the MM_STMXT Statement Extract File: 
+
+• 0000 - Statement Date 
+• 0001 - New Account 
+• 1000 - Name and Address 
+• 1005 - ZIP Code 
+• 1008 - Electronic Address 
+• 1010 - End of Name and Address 
+• 1050 - Branch Address 
+
+
+
+• 1055 - Branch Zip Code 
+• 1060 - Branch End of Address 
+• 1500 - Statement Summary 
+• 2000 - Account Summary 
+• 2250 - Account Interest 
+• 2255 - Account Interest Detail 
+• 2260 - Reg DD Fee Summary Information 
+• 2500 - Deposit Account Detail 
+• 3000 - Checking Detail Transaction 
+• 3050 - Check Image 
+• 3100 - ATM Detail Transaction 
+• 3200 - Service Charge Transaction 
+• 3300 - Account Balance 
+• 3500 - Automated Settlement Transactions 
+• 4000 - Loan Account Summary 
+• 4050 - Loan Account Interest Summary 
+• 4100 - Loan Detail Transaction 
+• 4125 - Loan Return Payment Address 
+• 4150 - Historical APR 
+• 4175 - Loan Account Reg Z Information 
+• 4500 - Master Line Sub-Loan Account Summary 
+• 4550 - Master Line Sub-Loan Account Interest Summary 
+• 4575 - Master Line Sub-loan Account Reg Z Information 
+• 4600 - Master Line Sub-Loan Detail Transaction 
+• 8000 - Account Trailer 
+• 8900 - Statement Trailer 
+• 9000 - File Control 
+• 9999 - End of File 
+
+
+ 
+
+Notes: 
+
+• Inclusion of the following records is based on variable settings: 1008, 1500, 2255, 
+2260, 3000, 3050, 3100, 3200, 3300, and 3500. Refer to the Variables Used with 
+MM_STMXT section for more information. 
+• The 1050, 1055, and 1060 records are included only when the Branch Addressing 
+YN (BRAD) parameter = Y. 
+• The 4175 and 4575 records are included only when the Reg Z Open End Credit 
+Product (RZOE) variable = Y and the Loan Activity Section Type (ACTP) variable = 
+5. 
+
+
+
+Transaction Reporting Groups 
+
+The following transaction reporting groups control the transactions included in the 
+MM_STMXT extract file output. 
+
+• STMT - Controls the transactions used for imaging 
+• STM2 - Controls the transactions used for transaction activity 
+• STX1 - Controls the transactions used to determine the amount of a loan advance 
+• ANLY - Controls the transactions counted when determining the account analysis 
+summaries 
+
+
+Transactions can be linked to each transaction reporting group in the RtxnRptGrp 
+system table using the procedure in the "RtxnRptGrp (Transaction Reporting Group or 
+Rtxn Report Group)" DNA help topic. 
+
+Service Charge vs. Relational Pricing 
+
+The service charge information included in the MM_STMXT extract file is based on the 
+method the institution uses to generate service charges. If the institution uses relational 
+pricing, service charges and reversals (waived amounts) are shown separately. For 
+institutions using service charging functionality, the service charge amount in the report 
+is the net value. 
+
+Cycle Changes 
+
+A cycle may be changed at any time. If the IMMEDIATE CYCLE CHANGE checkbox is 
+selected on the Cycles screen, MM_STMXT applies the new cycle immediately. 
+
+Statement Delivery Code User Field 
+
+If a statement delivery code is specified at the person or organization level through the 
+Statement Delivery Code user field, the value is included in the New Account (0001) 
+Record of MM_STMXT. Setting a delivery code value in the Statement Delivery Code 
+user field at the person or organization level affects all accounts where the person or 
+organization is the Tax Reported For owner. If the Statement Delivery Code user field is 
+blank, the delivery method set on the Cycles screen at the account level is used. If both 
+the Statement Delivery Code user field is blank and no delivery method is set on the 
+Cycles screen at the account level, the delivery method is determined by your print 
+vendor. 
+
+The institution must create the Statement Delivery Code user field using the standard 
+procedures for establishing institution-defined user fields. Refer to the “User Fields” help 
+topic for detailed instructions. The user field code for the Statement Delivery Code user 
+field must be STDL, and the user field must be set to display at the person and 
+organization level. The delivery code value specified through the Statement Delivery 
+Code (STDL) user field cannot exceed four characters. For consistency between the 
+Statement Delivery Code user field values and the delivery methods used for cycles, the 
+STDL user field values should mirror the codes set up in the Delivery Method business 
+table. 
+
+Note: STDL user field values are used for third-party vendor purposes only and are not 
+used within the DNA system. 
+
+
+MM_STMXT and Reg E Statements 
+
+The default setting for the ACCOUNT CYCLES REQUIRED checkbox on the Application 
+Manager screen for the MM_STMXT batch application is selected. With the ACCOUNT 
+CYCLES REQUIRED checkbox selected, the system requires an account cycle to be 
+specified when running the report. However, Reg E statements do not use cycles; when 
+running MM_STMXT for Reg E statements, the ACCOUNT CYCLES REQUIRED checkbox 
+must be cleared. 
+
+To clear the checkbox, navigate to System > Institution > Applications and follow the 
+steps below. 
+
+1. On the Application Manager screen, 
+a. Select Batch Executable from the APPLICATION TYPE dropdown list. 
+b. The screen refreshes and the applications display in the Applications grid. 
+c. Select Statement Extract (MM_STMXT) from the Applications grid and click 
+Edit. 
+d. The Edit Application tab populates. 
+
+
+
+
+
+
+
+2. On the Edit Application tab, 
+a. Clear the ACCOUNT CYCLE REQUIRED checkbox, indicating that account cycles 
+are not required. 
+b. Click Process. 
+
+
+
+
+3. To return to the previous screen (if not displayed), click Close. 
+
+
+Caution! No warning is raised if the ACCOUNT CYCLE REQUIRED checkbox is not selected 
+for a batch job that typically uses cycles, and cycles are not linked to the application for 
+the standard runs. Therefore, when running MM_STMXT for statements that use cycles, 
+the institution must ensure cycles are linked to the MM_STMXT application prior to 
+running the batch job. 
+
+ 
+
+
+Variables Used with MM_STMXT 
+
+Overview 
+
+The information included in the MM_STMXT extract file is based on the values for the 
+variables associated with the MM_STMXT batch application. Some of the variables are 
+set at the system level and others at the product level. These variables are described in 
+this section. Refer to the “System Level Variables” and the “Product Level Variables” 
+DNA help topics for detailed instructions on setting variables. 
+
+Overrides 
+
+The following tables indicate which system-level variables can be overridden at the 
+product level. A product-level variable value can be overridden at the account level if the 
+ACCOUNT OVERRIDE checkbox is selected on the Variable Maintenance screen at the 
+product level. 
+
+Refer to the “System-Level Variables,” “Product-Level Variables,” or “Variables at the 
+Account Level” DNA help topics for detailed instructions on setting variables or 
+overrides. 
+
+Statement (STMT) Calculation Type 
+
+The following variables are set at the system level and cannot be overridden. 
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+DPYN 
+
+Daily Periodic Rate YN 
+
+N 
+
+Yes/No 
+
+Indicates if the daily periodic rate 
+displays for all loan accounts. 
+
+Y = Daily periodic rate displays 
+
+N = Daily periodic rate does not 
+display 
+
+MGIN 
+
+Message Text Indicator 
+
+N 
+
+Yes/No 
+
+Indicates if the text specified in the 
+Message Text (MSG) parameter is 
+included in the Statement Date 
+(0000) Record. 
+
+Y = Include the message text 
+
+N = Do not include the message 
+text 
+
+RTCI 
+
+Returned Check 
+Information YN 
+
+No 
+
+Yes/No 
+
+Indicates if returned check details 
+are included with the Transaction 
+Description in the Deposit Account 
+Transaction Detail (2500) Record. 
+
+Y = Include returned check 
+information 
+
+N = Do not include returned check 
+information 
+
+
+
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+SCWD 
+
+Service Charge Waiver 
+Detail 
+
+2 
+
+Numeric 
+
+Indicates how assessed service 
+charges and waived service 
+charges are listed in the statement 
+detail. 
+
+0 = Show Waivers in Detail. 
+Assessed and waived charges are 
+listed separately. 
+
+1 = Show Net Charge Only/Even if 
+0. The net of each assessed and 
+waived charge is listed. 
+
+2 = Show Net Charge Only/Omit if 
+0. The net of each assessed and 
+waived charge is listed unless the 
+net charge is zero. 
+
+FLTP 
+
+Statement Sort Filetype 
+
+1 
+
+Numeric 
+
+Method used to sort the statements. 
+
+1 = Account Number 
+
+2 = Account Number and Check 
+Count 
+
+3 = Pocket Number, Account 
+Number, Check Count, space-filled, 
+and 9-filled (15 accounts per 
+line/record) 
+
+4 = Zero filled, Account Number, 
+and Check Count 
+
+5 = BFST21, Account Number, 
+Check Count, Statement Through 
+Date, space-filled, and zero-filled 
+
+6 = ACS format 
+
+7 = Utica format 
+
+8 = FHLB Assigned Number format 
+
+9 = OSI Standard 
+
+10 = Wausau format 
+
+11 = OSI Standard with 16-digit 
+“Short Number” 
+
+12 = Advanced Finance Systems 
+format 
+
+
+
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+TRDL 
+
+Transaction Detail 
+
+No 
+
+Yes/No 
+
+Indicates if the Balance Category 
+description is included with the 
+Transaction Description for the 
+following transactions. 
+
+• Charge Assessment (CHAS) 
+• Charge Payment (CHRT) 
+• Charge Waive (CHWV) 
+• Simple Insurance Premiums 
+(SINS) 
+
+
+Y = Include the Balance Category 
+description with the Transaction 
+Description 
+
+N = Do not include the Balance 
+Category description 
+
+SDTD 
+
+Show Detail Transaction 
+Desc 
+
+No 
+
+Yes/No 
+
+Indicates if additional transaction 
+description information is included 
+for Accounts Receivable 
+Conversion (ARC) and Point-of-
+Purchase (POP) transactions. 
+
+Y = ARC transaction descriptions 
+include “Accounts Receivable Entry 
+SERIAL #:” followed by the serial 
+number. POP transaction 
+descriptions include “SERIAL #:” 
+followed by the serial number 
+
+N = ARC and POP transactions do 
+not include additional transaction 
+information 
+
+
+
+ 
+
+
+Statement Processing (STPR) Calculation Type 
+
+The following variables are set at the system level. Overrides are allowed at the product 
+level. 
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+CKCD 
+
+Checks in Detail 
+
+1 
+
+Integer 
+
+Indicates how to display check 
+information in the Deposit Account 
+Transaction Detail (2500) record. 
+
+1 = Show the detail 
+
+2 = Do not show the detail 
+
+3 = Summarize completed checks; 
+show detail for all others 
+
+4 = Summarize all checks 
+
+YPXX 
+
+Earnings Credit to 
+Interest 
+
+N 
+
+Yes/No 
+
+Y = Include the earnings credit to 
+interest 
+
+N = Do not include credit to interest 
+
+HZIM 
+
+Horizontal Images 
+
+2 
+
+Text 
+
+Number of horizontal images per 
+page 
+
+PDCB 
+
+Images - 
+Debits/Credits/Both 
+
+D 
+
+Text 
+
+Indicates the type of images 
+included. 
+
+D = Include images for debits 
+
+C = Include images for credits 
+
+B = Include images for debits and 
+credits 
+
+Note: Used only for Statement Sort 
+Filetype (FLTP) of 7 OR 10. 
+
+PO08 
+
+Include 1008 record 
+types 
+
+Y 
+
+Yes/No 
+
+Y = Generate the electronic 
+address record 
+
+N = Do not generate the electronic 
+address record 
+
+PO14 
+
+Include 1020/1025 
+record types 
+
+N 
+
+Yes/No 
+
+Y = Generate the statement 
+summary records 
+
+N = Do not generate the statement 
+summary records 
+
+PO01 
+
+Include 1500 record 
+types 
+
+Y 
+
+Yes/No 
+
+Y = Generate the statement 
+summary record 
+
+N = Do not generate the statement 
+summary record 
+
+PO02 
+
+Include 2255 record 
+types 
+
+Y 
+
+Yes/No 
+
+Y = Generate the account interest 
+record 
+
+N = Do not generate the account 
+interest record 
+
+
+
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+PO03 
+
+Include 3000 record 
+types 
+
+Y 
+
+Yes/No 
+
+Y = Generate the checking detail 
+transaction record 
+
+N = Do not generate the checking 
+detail transaction record 
+
+PO04 
+
+Include 3100 record 
+types 
+
+Y 
+
+Yes/No 
+
+Y = Generate the ATM detail 
+transaction record 
+
+N = Do not generate the ATM detail 
+transaction record 
+
+PO05 
+
+Include 3200 record 
+types 
+
+Y 
+
+Yes/No 
+
+Y = Generate the service charge 
+transaction record 
+
+N = Do not generate the service 
+charge transaction record 
+
+PO06 
+
+Include 3300 record 
+types 
+
+Y 
+
+Yes/No 
+
+Y = Generate the account balance 
+record 
+
+N = Do not generate the account 
+balance record 
+
+PO07 
+
+Include 3500 record 
+types 
+
+Y 
+
+Yes/No 
+
+Y = Generate the automated 
+settlement transaction record 
+
+N = Do not generate the automated 
+settlement transaction record 
+
+XTIM 
+
+Include Image 
+record(3050)YN 
+
+Y 
+
+Yes/No 
+
+Y = Include the Check Image 
+(3050) record. 
+
+N = Do not include the Check 
+Image (3050) record. 
+
+LSRT 
+
+Linked Account Sort 
+Order 
+
+None 
+
+Text 
+
+Open Solutions internal use only. 
+Allows for control of the sort order 
+of linked accounts. 
+
+MSRT 
+
+Master Line Account 
+Sort Order 
+
+None 
+
+Text 
+
+Fiserv internal use only. Allows for 
+control of the sort order of accounts 
+linked to a master line account. 
+
+PIFB 
+
+Print Images Front/Back 
+
+F 
+
+Text 
+
+Indicates how print images are 
+handled. 
+
+F = Print front side of image only for 
+all items 
+
+B = Print front and back side of 
+images for all items 
+
+C = Print front only for debits and 
+print front and back for credits 
+
+D = Print front only for credits and 
+print front and back for debits 
+
+Note: Applies to Standard 
+Statement Extract Record 2000 and 
+Statement Sort Filetype (FLTP) of 7 
+or 10 only. 
+
+VTIM 
+
+Vertical Images 
+
+6 
+
+Text 
+
+Number of vertical images per page 
+
+
+
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+YBAL 
+
+Yield Calculation 
+Method 
+
+ACT 
+
+Text 
+
+Balance type used in the yield 
+calculation. 
+
+ACT = Use average daily balance 
+
+MJMI = Balance type used based 
+on the product’s calculation balance 
+type: 
+
+• Use average daily balance if the 
+product’s calculation balance 
+type is Actual (ACT) or Average 
+(AVG) 
+• Use average collected balance if 
+the product’s calculation balance 
+type is Collected (COLL) 
+• Use average collected interest 
+balance if the calculation balance 
+type is Collected For Interest 
+Holds (COLI) 
+
+
+
+
+Loan Bill (BILL) Calculation Type 
+
+The following variables are set at the system level and overrides are allowed. 
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+8APA 
+
+Adjustment Payment 
+Amount 
+
+N 
+
+Yes/No 
+
+Y = Subtract unapplied amounts 
+from the amount due 
+
+N = Do not subtract unapplied 
+amounts from the amount due 
+
+QAIN 
+
+Bill Error Address 
+Indicator 
+
+N 
+
+Yes/No 
+
+Y = Include the bill error inquiry 
+address information in the Loan 
+Account Reg Z Information (4175) 
+and Master Line Sub-Loan Account 
+Reg Z Information (4575) records 
+
+N = Do not include the bill error 
+inquiry address information 
+
+Note: The bill inquiry address is 
+determined by the Bill Error 
+Address Use Code (QAUC) 
+variable. 
+
+
+
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+QAUC 
+
+Bill Error Address Use 
+Code 
+
+PRI 
+
+Text 
+
+This address use code defines 
+which address is used as the bill 
+error inquiry address in the Loan 
+Account Reg Z Information (4175) 
+and Master Line Sub-Loan Account 
+Reg Z Information (4575) records. 
+
+Address use codes are found on 
+the AddrUse business table in DNA. 
+
+Note: The Bill Error Address 
+Indicator (QAIN) variable must be 
+set to Y. 
+
+QPIN 
+
+Bill Error Phone Nbr 
+Indicator 
+
+No 
+
+Yes/No 
+
+Y = Include the bill error inquiry 
+phone number in the Loan Account 
+Reg Z Information (4175) and 
+Master Line Sub-Loan Account Reg 
+Z Information (4575) records 
+
+N = Do not include the bill error 
+inquiry phone number 
+
+Note: The bill error phone number 
+is determined by the Bill Error 
+Phone Use Code (QPUC) variable. 
+
+QPUC 
+
+Bill Error Phone Use 
+Code 
+
+BUS 
+
+Text 
+
+This phone use code defines which 
+phone number is used as the billing 
+error inquiry phone number on the 
+Loan Account Reg Z Information 
+(4175) and Master Line Sub-Loan 
+Account Reg Z Information (4575) 
+records. 
+
+Phone use codes are found on the 
+PhoneUse business table in DNA. 
+
+Note: The Bill Error Phone Nbr 
+Indicator (QPIN) variable must be 
+set to Y. 
+
+BAIN 
+
+Inst Address Indicator 
+
+Y 
+
+Yes/No 
+
+Y = Include the address as 
+determined by the Inst Address Use 
+Code (BAAU) variable in the Loan 
+Return Payment Address (4125) 
+record 
+
+N = Do not include the address in 
+the Loan Return Payment Address 
+(4125) record 
+
+Note: If the Inst Address-Use 
+Branch (BABR) variable = Y, the 
+account’s branch address is used 
+instead of the financial institution 
+address. 
+
+
+
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+BAAU 
+
+Inst Address Use Code 
+
+PRI 
+
+Text 
+
+This address use code defines 
+which address is included in the 
+Loan Return Payment Address 
+(4125) record when the Inst 
+Address Indicator (BAIN) variable = 
+Y. 
+
+Address use codes are found in the 
+DNA AddrUse business table . 
+
+Note: If the Inst Address-Use 
+Branch (BABR) variable = Y, the 
+account’s branch address is used 
+instead of the financial institution 
+address. 
+
+BABR 
+
+Inst Address-Use 
+Branch 
+
+N 
+
+Yes/No 
+
+Y = Use the address of the 
+account’s branch instead of the 
+financial institution’s address in the 
+return portion. 
+
+N = Use the address of the financial 
+institution. 
+
+LPYN 
+
+LIP Indicator 
+
+N 
+
+Yes/No 
+
+Y = Calculate and include LIP 
+balances 
+
+N = Do not calculate and include 
+LIP balances 
+
+ACTP 
+
+Loan Activity Section 
+Type 
+
+5 
+
+Integer 
+
+Controls the format of the activity 
+section of the bill. 
+
+5 = Required Reg Z information is 
+generated for the Account Reg Z 
+Information (4175) and Master Line 
+Sub-Loan Account Reg Z 
+Information (4575) records 
+
+NAYN 
+
+Print Negative Amort 
+Info YN 
+
+N 
+
+Yes/No 
+
+Y = Calculate and include negative 
+amortization information 
+
+N = Do not calculate and include 
+negative amortization information 
+
+CLRQ 
+
+Credit Line Box 
+Required 
+
+Y 
+
+Yes/No 
+
+Indicates if the Credit Line box is 
+included on loan bills and 
+statements for loans and lines of 
+credit. 
+
+Y = The Credit Line box is included. 
+
+N = The Credit Line box is not 
+included. 
+
+
+
+
+Regulation DD STMT Section Control (RDCS) Calculation Type 
+
+The following variable is set at the system level and overrides are allowed. 
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+RDDS 
+
+Overdraft Disclosure 
+
+N 
+
+(Do 
+Not 
+Print) 
+
+Yes/No 
+
+Y (Print) = Include the Reg DD Fee 
+Summary (2260) record 
+
+N (Do Not Print) = Do not include 
+the Reg DD Fee Summary (2260) 
+record 
+
+
+
+Avg Neg Collected Balance Service Charge (VAAP) Product-Level 
+Calculation Type 
+
+The following variable is set at the product level. 
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+SCHD 
+
+Calc Schedule Number 
+
+None 
+
+Integer 
+
+Number of the calculation schedule 
+used to determine the charge for 
+having an average negative 
+collected balance 
+
+
+
+Negative Amortization (NGAM) Product-Level Calculation Type 
+
+The following variable is set at the product level. 
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+CPNA 
+
+Capitalize Neg Amort 
+
+N 
+
+Yes/No 
+
+Y = Capitalize negative amortization 
+balances 
+
+N = Do not capitalize negative 
+amortization balances 
+
+
+
+Required Available Balance (URBA) Product-Level Calculation Type 
+
+The following variable is set at the product level. 
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+SCHD 
+
+Calc Schedule Number 
+
+None 
+
+Integer 
+
+Number of the calculation schedule 
+used for the account analysis credit 
+
+
+
+
+Regulatory - US (RGUS) Product-Level Calculation Type 
+
+The following variable is set at the product level. 
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+RZOE 
+
+Reg Z Open End Credit 
+Product 
+
+N 
+
+Yes/No 
+
+Y = Include the Account Reg Z 
+Information (4175) and Master Line 
+Sub-Loan Account Reg Z 
+Information (4575) records for 
+accounts in products where the 
+Loan Activity Section Type (ACTP) 
+variable = 5 
+
+N = Do not include the 4175 and 
+4575 records for any account 
+
+
+
+Reg Z Reportable Balance (RGZB) Product-Level Calculation Type 
+
+The following variable is set at the product level. 
+
+Code 
+
+Description 
+
+Initial 
+Value 
+
+Data 
+Type 
+
+Description of Value(s) 
+
+RZBL 
+
+Reg Z Reportable 
+Balance YN 
+
+Y 
+
+Yes/No 
+
+Y = Transactions linked to the 
+ZFEE transaction reporting group 
+display in the Reg Z Fees section 
+
+N = Transactions display in the 
+general transactions section 
+
+Note: Set the RZBL variable to N 
+for balance types not reportable in 
+the Reg Z Fees section. 
+
+
+
+ 
+
+ 
+
+
+Statement Extract (MM_STMXT) Report 
+
+Description 
+
+The Statement Extract (MM_STMXT) batch application produces an extract file with 
+comprehensive account information including information for new accounts, additional 
+credit line and allotment information in the Loan Account Summary record, and master 
+line sub-loan records. The report is broken into fixed length record types for ease of 
+printing. 
+
+Variables under several different calculation types control the type of information 
+included in the report. The variables are described in the Variables Used with 
+MM_STMXT section of this document. 
+
+The output is described in the Statement Extract (MM_STMXT) Record Layouts section 
+of this document. 
+
+Service Charge Information 
+
+The service charge information included in the MM_STMXT extract file is based on the 
+method the institution uses to generate service charges. If the institution uses relational 
+pricing, service charges and reversals (waived amounts) are shown separately. For 
+institutions using service charging functionality, the service charge amount is the net 
+value. 
+
+Parameters 
+
+The report has the following parameters: 
+
+Parameter 
+
+Req’d 
+
+Default 
+
+Description of Value(s) 
+
+Available Funds 
+Method Code 
+(AMTH) 
+
+No 
+
+GPND 
+
+Comma-separated list of availability method 
+code(s) from the Availability Methods system table 
+used to determine the available balance on the 
+account. The default is the Generic Procedure - No 
+Draws (GPND) availability method. 
+
+Branch 
+Addressing YN 
+(BRAD) 
+
+No 
+
+N 
+
+Indicates whether the Branch Address (1050), 
+Branch Zip Code (1055), and Branch End of 
+Address (1060) records are included in the extract. 
+
+Y = Include the 1050, 1055, and 1060 records. 
+
+N = Do not include the 1050, 1055, and 1060 
+records. 
+
+Current Acct 
+Status Code 
+(CASC) 
+
+No 
+
+ACT, CLS, 
+IACT, 
+DORM 
+
+Comma-separated list of codes for the account 
+statuses included in the extract. 
+
+ACT = Active 
+
+CLS = Closed 
+
+IACT = Inactive 
+
+DORM = Dormant 
+
+Note: If blank, account status is not used as one of 
+the report’s selection criteria and accounts are 
+included regardless of status. 
+
+
+
+
+Parameter 
+
+Req’d 
+
+Default 
+
+Description of Value(s) 
+
+Language 
+Format (LANG) 
+
+No 
+
+Null 
+
+For international use only. Indicates which 
+extract(s) to generate based on the customers 
+language preference and provide the language 
+code to the print vendor. 
+
+ALL = All language formats. The output is based 
+on the customer’s language preference. Two 
+extract files for FRCA and ENCA are generated. 
+FRCA and ENCA are appended as suffixes to the 
+output file names. 
+
+FRCA = French (Canadian). The text in the extract 
+file is in French. Only one extract file for customers 
+with a language preference of French is generated. 
+FRCA is appended as a suffix to the output file 
+name. 
+
+ENCA = English (Canadian). The text in the extract 
+file is in English. Only one extract file for customers 
+with a language preference of English is 
+generated. ENCA is appended as a suffix to the 
+output file name. 
+
+If LANG is null, all language formats are included. 
+The translated (localized) text in the extract files is 
+maintained on the Language Text Translation 
+screen. See the “Language Text Translation” 
+online Help topic for more detail. 
+
+Note: The Multilingual Default Culture (MLDC) 
+institution option must be enabled to support the 
+person’s/organization’s language preference. If 
+MLDC is disabled, the Language Format (LANG) 
+parameter is ignored and no language code is 
+included in the Statement Date (0000) record. 
+
+Message Text 
+(MSG) 
+
+No 
+
+None 
+
+Maximum 100 characters of text. 
+
+Note: This text is included in the Statement Date 
+(0000) Record when the Message Text Indicator 
+(MGIN) variable = Y. 
+
+Print Statement 
+if Activity (PSIA) 
+
+No 
+
+N 
+
+Y = Allow accounts with unique cycles (e.g., 
+quarterly, semi-annual, or annual frequency) to 
+produce statements on a monthly basis if pre-
+defined account activity occurs 
+
+N = Disable this capability 
+
+RptOnly_YN 
+(RPT) 
+
+Yes 
+
+Y 
+
+Y = Generate the extract without updating 
+AcctApplHist with the Account Number, Effective 
+Date of Queue, and Statement Application 
+Numbers 
+
+N = Generate the extract and update AcctApplHist 
+with the Account Number, Effective Date of Queue, 
+and Statement Application Number 
+
+
+
+
+Parameter 
+
+Req’d 
+
+Default 
+
+Description of Value(s) 
+
+Restart Type 
+(RSTP) 
+
+No 
+
+0 
+
+Recovery option to be used when re-running 
+MM_STMXT after an error occurred in a previous 
+run. 
+
+0 = No restart (default) 
+
+1 (followed by a QueNbr) = Add the page 
+information for the statement files created by the 
+specified queue and pick up where it left off (e.g., 1 
+NNNN) 
+
+2 = Delete all AcctApplHist rows for statements for 
+the Queue Effective Date and recreate the 
+statements. Note: Use caution if multiple cycles 
+were used 
+
+3 (followed by a date in MM-DD-YYYY format) = 
+Delete all AcctApplHist rows for statements for the 
+specified date and recreate these statements (e.g., 
+3 01-01-2012) 
+
+4 (followed by an AcctCycleCd) = Delete all 
+AcctApplHist rows for the Queue Effdate in the 
+specified AcctCycleCd and recreate these 
+statements (e.g., 4 CYCD) 
+
+Note: Valid only when the RptOnly_YN (RPT) 
+parameter = N. 
+
+Start Date (SD) 
+
+No 
+
+None 
+
+Start Date (MM-DD-YYYY) must be provided when 
+running statements without any account cycles. 
+
+Note: Used for Reg E statements only. Leave 
+blank for all other statements. 
+
+Show Inactive 
+YN (SIYN) 
+
+No 
+
+Y 
+
+Indicates if accounts are included when the 
+account’s Date Last Contact is earlier than the 
+statement Start Date. 
+
+Y = Include all accounts 
+
+N = Include only accounts with activity within the 
+statement period 
+
+Note: Not based on the status of the account. 
+
+
+
+
+Parameter 
+
+Req’d 
+
+Default 
+
+Description of Value(s) 
+
+Report Sort 
+Option (SORT) 
+
+No 
+
+1 
+
+1 = Sort by Account Number 
+
+2 = Sort by Zip Code, Zip Suffix, Account Number 
+
+3 = Sort by Account Number. Creates two 
+statement print files: 
+
+• File 1 contains accounts where Check 
+Count = 0 or TruncateYN flag = Y 
+• File 2 contains accounts where Check 
+Count > 0 and TruncateYN flag = N 
+
+
+4 = Sort by Zip Code, Zip Suffix, Account Number. 
+Creates two statement print files: 
+
+• File 1 contains accounts where Check 
+Count = 0 or TruncateYN flag = Y 
+• File 2 contains accounts with a Check 
+Count > 0 and TruncateYN flag = N 
+
+
+5 = Create two Statement Print Files: 
+
+• File 1 sorts by Zip Code, Zip Suffix, and 
+Account Number and contains accounts 
+with a Check Count = 0 or TruncateYN flag 
+= Y 
+• File 2 Sorts by Account Number and 
+contains Accounts with a Check Count > 0 
+and TruncateYN flag = N 
+
+
+6 = Sort by Mail Type Code, Account Number 
+
+7 = Sort by Mail Type Code, Truncate YN, Account 
+Number 
+
+8 = Sort by Branch Number, Account Number 
+
+9 = Sort by Branch Number, Truncate YN, Account 
+Number 
+
+10 = Sort by Branch Number, Mail Type Code, 
+Truncate YN, Account Number 
+
+11 = Sort by Truncate YN, Mail Type Code, Branch 
+Number, Account Number 
+
+12 = Sort by Account Number in descending order 
+
+13 = Sort by Country Code, Zip Code, Zip Suffix, 
+Account Number 
+
+Print Statement 
+Register (SREG) 
+
+No 
+
+N 
+
+Y = Generate a statement register with the extract 
+file 
+
+N = Do not generate a register 
+
+Create 
+Secondary 
+Report (SRYN) 
+
+No 
+
+Y 
+
+Y = Create the Statement Sort File 
+(SSRTFILE.CTL) based on the Statement Sort 
+Filetype (FLTP) variable 
+
+N = Do not create the Statement Sort File 
+
+Create Sort File 
+Only (SSRT) 
+
+No 
+
+None 
+
+Y = Create only the Statement Sort File (if 
+applicable) 
+
+N = Create the Statement Print File and the 
+Statement Sort File (if applicable) 
+
+
+
+
+Parameter 
+
+Req’d 
+
+Default 
+
+Description of Value(s) 
+
+Thru Date (TD) 
+
+No 
+
+None 
+
+Thru Date (MM-DD-YYYY) must be provided when 
+running statements without any account cycles. 
+
+Note: Used for Reg E statements only. Leave 
+blank for all other statements. 
+
+Type 1 String 
+(TYP1) 
+
+No 
+
+None 
+
+Comma-delimited list of account numbers to 
+include in the extract that meet the selected cycle 
+or the Reg E date range criteria. 
+
+Note: Field is limited to 254 characters. 
+
+
+
+Operation 
+
+This updating batch application is run when a statement extract file is required. The 
+Queue Effective Date controls the Thru Date for the file if cycles are specified. The Reg 
+E statement extract uses the Start Date and Thru Date parameters to control the start 
+and end of the period for the file generation. 
+
+Output 
+
+When the number of primary accounts processed and number of statements generated 
+are not the same, the excluded accounts are displayed at the end of the LIS file with an 
+activity error message. 
+
+The extract file format is described in the Statement Extract (MM_STMXT.TXT) Record 
+Layouts section of this document. 
+
+ 
+
+
+Statement Extract (MM_STMXT.TXT) Record Layouts 
+
+Overview 
+
+The Statement Extract file consists of multiple records that can be created separately 
+based on settings of applicable variables. Each record is a fixed length. The data 
+included in the report is based on various variable settings and the report parameters. 
+Refer to the Variables used with MM_STMXT and Statement Extract (MM_STMXT) 
+Report sections for more information. 
+
+All alphanumeric (AN) fields are left-justified. All numeric (N) fields are right-justified. The 
+final FILLER field in each record includes a pipe character (“|”) which designates the end 
+of the record. 
+
+
+Statement Date (0000) Record 
+
+The Statement File (MM_STMXT.TXT) begins with the Statement Date Record that 
+contains the statement date and identifies the institution. The text for any message 
+included in the statement is also included in this record. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+0000 
+
+Filler 
+
+17 
+
+5 
+
+AN 
+
+Space-filled 
+
+Statement Date 
+
+10 
+
+22 
+
+AN 
+
+Effective date (MM-DD-YYYY) of the 
+statement 
+
+Message Text 
+
+100 
+
+32 
+
+AN 
+
+Message text included in the 
+statement as specified through the 
+Message Text (MSG) report 
+parameter. The Message Text 
+Indicator (MGIN) variable must be 
+set to Y 
+
+Routing and Transit 
+
+9 
+
+132 
+
+N 
+
+Institution routing number 
+
+Financial Institution 
+Name 
+
+40 
+
+141 
+
+AN 
+
+Institution name. Right-padded with 
+spaces 
+
+Creating Program 
+Name 
+
+20 
+
+181 
+
+AN 
+
+MM_STMXT. Right-padded with 
+spaces. 
+
+Program Version 
+
+10 
+
+201 
+
+AN 
+
+Fiserv internal use only 
+
+QueNbr 
+
+10 
+
+211 
+
+N 
+
+QueNbr for the report. Zero-padded. 
+
+ApplNbr 
+
+10 
+
+221 
+
+N 
+
+ApplNbr for the report. Zero-padded. 
+
+QueSubNbr 
+
+10 
+
+231 
+
+N 
+
+QueSubNbr for the report. Zero-
+padded. 
+
+Institution Phone 
+Number 
+
+15 
+
+241 
+
+AN 
+
+Institution phone number. Right-
+padded with spaces. 
+
+Filler 
+
+30 
+
+256 
+
+AN 
+
+Space-filled 
+
+Language Code 
+(LCODE)* 
+
+4 
+
+246 
+
+AN 
+
+Language code for statements. The 
+default is null (space-filled). The 
+values are FRCA (French Canadian) 
+or ENCA (English Canadian). 
+
+
+
+ 
+
+
+New Account (0001) Record 
+
+The New Account record begins a statement for a primary account. This record provides 
+high-level information about the account and the account owner. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Date 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+0001 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account. Zero-padded. 
+
+Member Number 
+
+14 
+
+22 
+
+N 
+
+For credit union members, system-
+assigned member number 
+(MemberAgreeNbr). Zero-padded. 
+
+Tax Identification 
+Number 
+
+9 
+
+36 
+
+N 
+
+Tax Reported For owner’s tax 
+identification number 
+
+Branch Number 
+
+12 
+
+45 
+
+N 
+
+Organization number for the 
+account’s assigned branch. Zero-
+padded. 
+
+Branch Name 
+
+40 
+
+57 
+
+AN 
+
+Name of the account’s assigned 
+branch. Right-padded with spaces. 
+
+Routing & Transit 
+Number 
+
+9 
+
+97 
+
+N 
+
+Routing and transit number for the 
+institution. Zero-padded. 
+
+Statement Type 
+
+1 
+
+106 
+
+AN 
+
+P = Primary statement 
+
+S = Secondary statement 
+
+Account Cycle Code 
+
+4 
+
+107 
+
+AN 
+
+Code for the account’s statement 
+cycle. Right-padded with spaces. 
+
+Statement Delivery 
+Code 
+
+4 
+
+111 
+
+AN 
+
+Code specified through the 
+institution-defined Statement 
+Delivery Code (STDL) person or 
+organization user field. 
+
+Note: The institution must define 
+the STDL person or organization 
+user field and specify a value at the 
+person or organization level. Refer 
+to the Statement Delivery Code 
+User Field information at the 
+beginning of this document. 
+
+Tax Reported 
+Person Number 
+
+12 
+
+115 
+
+N 
+
+Person number for the account’s 
+Tax Reported For owner, if 
+applicable. Zero-padded. 
+
+Tax Reported Org 
+Number 
+
+12 
+
+127 
+
+N 
+
+Organization number for the 
+account’s Tax Reported For owner, 
+if applicable. Zero-padded. 
+
+Sequence Number 
+
+10 
+
+139 
+
+AN 
+
+Sequence number of the primary 
+account extracted 
+
+OwnCd 
+
+4 
+
+149 
+
+AN 
+
+Code for the type of owner. Right-
+padded with spaces. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Date 
+Type 
+
+Description 
+
+MailTypCd 
+
+4 
+
+153 
+
+AN 
+
+Mail type code that indicates the 
+primary account address. Right-
+padded with spaces. 
+
+MailAddrUseCd 
+
+4 
+
+157 
+
+AN 
+
+Address use code for the mailing 
+address for the specified 
+MailTypCd. Right-padded with 
+spaces. 
+
+Address use codes are found on 
+the DNA AddrUse business table. 
+
+AddrFormatCd 
+
+4 
+
+161 
+
+AN 
+
+Code that specifies how the 
+address is built. Right-padded with 
+spaces. 
+
+Branch Phone 
+Number 
+
+15 
+
+165 
+
+AN 
+
+Branch phone number. Right-
+padded with spaces. 
+
+Filler 
+
+31 
+
+180 
+
+AN 
+
+Space-filled 
+
+
+
+Name and Address (1000) Record 
+
+The Name and Address record provides mailing information about the statement. 
+Multiple records for the same account may exist. The Name/Address Indicator defines 
+the type of information included in the Name/Address Information field. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+1000 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account 
+
+Name / Address 
+Information 
+
+40 
+
+22 
+
+AN 
+
+Text of the name or address (as 
+indicated by the Name / Address 
+Type Indicator Field - Position 62). 
+
+The name includes a person’s first 
+name and last name or an 
+organization name. 
+
+A maximum of 5 lines of name and 
+address information can be 
+included in the file. 
+
+Right-padded with spaces. 
+
+Name / Address 
+Type Indicator 
+
+1 
+
+62 
+
+A 
+
+Type of record for the account 
+owner: 
+
+N = Name record 
+
+A = Address record 
+
+User Field Value 
+
+60 
+
+63 
+
+AN 
+
+Not in use. Space-filled. 
+
+Filler 
+
+40 
+
+123 
+
+AN 
+
+Space-filled 
+
+
+
+
+ZIP Code (1005) Record 
+
+The ZIP Code record breaks out the zip or mail code information for this statement 
+account. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+1005 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account 
+
+ZIP Code 
+
+5 
+
+22 
+
+N 
+
+Zip or mail code for the address. 
+Left-padded with spaces. 
+
+Note: For non-US addresses, the 
+maill code prints in positions 22–30. 
+If the non-US mail code is greater 
+than nine positions, it is truncated to 
+fit the space. 
+
+ZIP Plus Four 
+
+4 
+
+27 
+
+N 
+
+Four-digit suffix for a zip+4 code for 
+the address. Left-padded with 
+spaces. 
+
+Country Code 
+
+4 
+
+31 
+
+A 
+
+Country code for the country of the 
+address (CtryMailCd). Right-padded 
+with spaces. 
+
+Note: If no value is specified, USA 
+is used as the country code. 
+
+Filler 
+
+66 
+
+35 
+
+AN 
+
+Space-filled 
+
+
+
+Electronic Address (1008) Record 
+
+The Electronic Address record contains email addresses for this statement account. This 
+record is only available for the MM_STMXT extract file. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+1008 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account 
+
+Address Use Code 
+
+4 
+
+22 
+
+AN 
+
+Address use code for email address 
+included in this record. Right-
+padded with spaces. 
+
+Address use codes are found on 
+the AddrUse business table in DNA. 
+
+Note: The ElectronicYN indicator 
+for the specified address use code 
+must be selected (Yes). 
+
+Address Information 
+
+40 
+
+26 
+
+AN 
+
+Email address that corresponds 
+with the specified address use 
+code. Right-padded with spaces. 
+
+
+
+
+Filler 
+
+100 
+
+66 
+
+AN 
+
+Space-filled 
+
+
+
+
+End of Name and Address (1010) Record 
+
+The End of Name and Address record provides end of address information for this 
+statement account. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+1010 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Filler 
+
+100 
+
+22 
+
+AN 
+
+Space-filled 
+
+
+
+Account Owner Name and Address (1020) Record 
+
+The Account Owner Name and Address record is included in the secondary statement. It 
+provides the name and address of the account owner for informational purposes. The 
+same account can have multiple records. This record is generated when the Include 
+1020/1025 Record Types (PO14) variable is set to Y. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+1020 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number of the primary 
+account 
+
+Name / Address 
+Information 
+
+40 
+
+22 
+
+AN 
+
+Text of the name or address (as 
+indicated by the Name/Address 
+Type Indicator field - position 62). 
+
+The name includes the person’s 
+first and last name or an 
+organization name. 
+
+A maximum of five lines of name 
+and address information can be 
+included in the file. 
+
+Right-padded with spaces. 
+
+Name / Address 
+Type Indicator 
+
+1 
+
+62 
+
+A 
+
+Type of record for the account 
+owner: 
+
+N = Name record 
+
+A = Address record 
+
+User Field Value 
+
+60 
+
+63 
+
+AN 
+
+Not in use. Space-filled. 
+
+Filler 
+
+40 
+
+123 
+
+AN 
+
+Space-filled 
+
+
+
+
+Account Owner ZIP Code (1025) Record 
+
+The Account Owner ZIP Code record is included in the secondary statement. It breaks 
+out zip or mail code information for the account owner’s address listed on the statement 
+account. This record is generated when the Include 1020/1025 Record Types (PO14) 
+variable is set to Y. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+1025 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number of the primary 
+account 
+
+ZIP Code 
+
+5 
+
+22 
+
+N 
+
+Zip or mail code for the address. 
+Left-padded with spaces. 
+
+Note: For non-US addresses, the 
+maill code prints in positions 22–30. 
+If the non-US mail code is greater 
+than nine positions, it is truncated to 
+fit the space. 
+
+ZIP Plus Four 
+
+4 
+
+27 
+
+N 
+
+Four-digit suffix of the zip code. 
+Left-padded with spaces. 
+
+Country Code 
+
+4 
+
+31 
+
+A 
+
+Country code of the country of the 
+address (CtryMailCd). Right-padded 
+with spaces. 
+
+Note: If no value is specified, USA 
+is used as the country code. 
+
+Filler 
+
+66 
+
+35 
+
+AN 
+
+Space-filled 
+
+
+
+Branch Address (1050) Record 
+
+The Branch Address record contains the institution's branch information for the primary 
+account and any linked accounts. Multiple records may exist for the same account. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+1050 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Address Information 
+
+40 
+
+22 
+
+AN 
+
+Address line (one per record). A 
+maximum of three Branch Address 
+records can be included in the file. 
+Right-padded with spaces. 
+
+Filler 
+
+39 
+
+62 
+
+AN 
+
+Space-filled 
+
+
+
+
+Branch Zip Code (1055) Record 
+
+The Branch Zip Code record breaks out the branch zip code information for this 
+statement account. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+1055 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Zip Code 
+
+5 
+
+22 
+
+N 
+
+Zip code for the branch address. 
+Left-padded with spaces. 
+
+Zip Plus Four 
+
+4 
+
+27 
+
+N 
+
+Four-digit suffix for a ZIP+4 code for 
+the branch address. Left-padded 
+with spaces. 
+
+Country Code 
+
+4 
+
+31 
+
+A 
+
+Country code for the country of the 
+branch address (CtryMailCd). Right-
+padded with spaces. 
+
+Note: If no value is specified, USA 
+is used as the country code. 
+
+Filler 
+
+66 
+
+35 
+
+AN 
+
+Space-filled 
+
+
+
+Branch End of Address (1060) Record 
+
+The Branch End of Address record notes the end of branch addressing information for 
+this statement account. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+1060 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Filler 
+
+29 
+
+22 
+
+AN 
+
+Space-filled 
+
+
+
+
+Statement Summary (1500) Record 
+
+The Statement Summary record contains balance information for the primary account, 
+any linked accounts, and any accounts in the AcctStmtAcctBal table for this statement 
+account. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+1500 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement. Left-
+padded with zeroes. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record. 
+Left-padded with zeroes. 
+
+Major Code 
+
+4 
+
+39 
+
+AN 
+
+Major account type code for the 
+specified account. Right-padded 
+with spaces. 
+
+Minor Code 
+
+4 
+
+43 
+
+AN 
+
+Minor account type code for the 
+specified account. Right-padded 
+with spaces. 
+
+Minor Product 
+Description 
+
+30 
+
+47 
+
+AN 
+
+Minor account type description for 
+the specified account. Right-padded 
+with spaces. 
+
+Amount 
+
+13 
+
+77 
+
+N 
+
+Ending balance (9(11)V99) as of 
+the statement date in the specified 
+account 
+
+Major Product 
+Description 
+
+30 
+
+90 
+
+AN 
+
+Major account type description for 
+the specified account. Right-padded 
+with spaces. 
+
+Minor Customer 
+Description 
+
+30 
+
+120 
+
+AN 
+
+Any customer/member-defined 
+description for the account’s 
+product. Right-padded with spaces. 
+
+Account Description 
+
+40 
+
+150 
+
+AN 
+
+Account description included in the 
+statement extract. Right-padded 
+with spaces. 
+
+Filler 
+
+100 
+
+190 
+
+AN 
+
+Space-filled 
+
+
+
+
+Deposit Account Summary (2000) Record 
+
+The Deposit Account Summary record contains information about a deposit account 
+(including the primary account) for this statement account. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+2000 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement. Left-
+padded with zeroes. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record. 
+Left-padded with zeroes. 
+
+Major 
+
+4 
+
+39 
+
+AN 
+
+Major account type code for the 
+specified account. Right-padded 
+with spaces. 
+
+Minor 
+
+4 
+
+43 
+
+AN 
+
+Minor account type code for the 
+specified account. Right-padded 
+with spaces. 
+
+Minor Product 
+Description 
+
+30 
+
+47 
+
+AN 
+
+Minor account type description for 
+the specified account. Right-padded 
+with spaces. 
+
+Starting Balance 
+
+13 
+
+77 
+
+N 
+
+Starting account balance 
+(9(11)V99) for the statement period 
+
+Deposits 
+
+13 
+
+90 
+
+N 
+
+Total deposits (9(11)V99) for the 
+statement period 
+
+Number of Deposit 
+Items 
+
+8 
+
+103 
+
+N 
+
+Number of deposited items for the 
+statement period. Zero-padded. 
+
+Interest 
+
+11 
+
+111 
+
+N 
+
+Interest earned (9(11)V99) on the 
+account during the statement period 
+
+Number of Interest 
+Items 
+
+8 
+
+122 
+
+N 
+
+Number of items earning interest for 
+the statement period. Zero-padded. 
+
+Withdrawals 
+
+13 
+
+130 
+
+N 
+
+Total withdrawals (9(11)V99) for the 
+statement period 
+
+Number of 
+Withdrawal Items 
+
+8 
+
+143 
+
+N 
+
+Number of withdrawals for the 
+statement period. Zero-padded. 
+
+Fees 
+
+11 
+
+151 
+
+N 
+
+Total fees; e.g., service charges 
+(9(11)V99) assessed on the 
+account for the statement period 
+
+Number of Fee 
+Items 
+
+8 
+
+162 
+
+N 
+
+Number of fees assessed during 
+the statement period. Zero-padded. 
+
+Check Count 
+
+8 
+
+170 
+
+N 
+
+Number of checks cleared against 
+the account during the statement 
+period. Zero-padded. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Ending Balance 
+
+13 
+
+178 
+
+N 
+
+Ending account balance (9(11)V99) 
+for the statement period 
+
+Start Transaction 
+Date 
+
+10 
+
+191 
+
+AN 
+
+Starting transaction date (MM-DD-
+YYYY) for the statement period 
+
+End Transaction 
+Date 
+
+10 
+
+201 
+
+AN 
+
+Ending transaction date (MM-DD-
+YYYY) for the statement period 
+
+Image Yes / No 
+
+1 
+
+211 
+
+A 
+
+Indicates if the statement includes 
+check images. Left-padded and 
+space filled. 
+
+Truncate Yes / No 
+
+1 
+
+212 
+
+A 
+
+Indicates if checks are truncated for 
+the account. Left-padded and space 
+filled. 
+
+Number of 
+Horizontal Images 
+
+4 
+
+213 
+
+N 
+
+Number of images to display 
+horizontally on the statement. Left-
+padded and zero filled. 
+
+Number of Vertical 
+Images 
+
+4 
+
+217 
+
+N 
+
+Number of images to display 
+vertically on the statement. Left-
+padded and zero filled. 
+
+Images Front / Back 
+
+1 
+
+221 
+
+AN 
+
+Indicates which side(s) of an image 
+to display on the statement: 
+
+F = Front. Display only the front of 
+debits and credits 
+
+B = Both. Display the front and 
+back of debits and credits 
+
+C = Credits. Display the front and 
+back of credits and only the front of 
+debits 
+
+D = Debits. Display the front and 
+back of debits and only the front of 
+credits 
+
+Account Description 
+
+40 
+
+222 
+
+AN 
+
+Account description included in the 
+statement extract. Right-padded 
+with spaces. 
+
+Major Product 
+Description 
+
+30 
+
+262 
+
+AN 
+
+Major account type description for 
+the specified account. Right-padded 
+with spaces. 
+
+Minor Customer 
+Description 
+
+30 
+
+292 
+
+AN 
+
+Any customer-defined description 
+for the account’s product. Right-
+padded with spaces. 
+
+Contract Date 
+
+10 
+
+322 
+
+AN 
+
+Date (MM-DD-YYYY) the account 
+was opened 
+
+Filler 
+
+90 
+
+332 
+
+AN 
+
+Space-filled 
+
+
+
+
+Account Interest (2250) Record 
+
+The Account Interest record contains summary information about the interest for this 
+deposit account. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+2250 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record 
+
+Start Date 
+
+10 
+
+39 
+
+AN 
+
+Start date (MM-DD-YYYY) for the 
+interest period 
+
+End Date 
+
+10 
+
+49 
+
+AN 
+
+End date (MM-DD-YYYY) for the 
+interest period 
+
+Cycle Days 
+
+4 
+
+59 
+
+N 
+
+Number of days in the cycle 
+
+Interest Rate 
+
+6 
+
+63 
+
+N 
+
+Interest rate (999V999) on the 
+account during the interest period 
+
+Average Percentage 
+Yield 
+
+6 
+
+69 
+
+N 
+
+APY (999V999) for the account 
+during the interest period 
+
+Average Daily 
+Balance 
+
+13 
+
+75 
+
+N 
+
+Average daily balance (9(11)V99) 
+for the interest period 
+
+Interest Earned This 
+Cycle 
+
+11 
+
+88 
+
+N 
+
+Interest (9(9)V99) earned during the 
+interest period 
+
+Interest Earned 
+Year-To-Date 
+
+11 
+
+99 
+
+N 
+
+Total interest (9(9)V99) earned on 
+the account from January 1 of the 
+current year to the end date for this 
+interest period 
+
+Maturity date 
+
+10 
+
+110 
+
+AN 
+
+Maturity date (MM-DD-YYYY)on the 
+account, if applicable 
+
+Accrued Interest 
+
+11 
+
+120 
+
+N 
+
+Interest accrued (9(9)V99) but not 
+posted on the account 
+
+Minimum Balance 
+
+13 
+
+131 
+
+N 
+
+Minimum balance (9(11)V99) 
+required to earn interest 
+
+Filler 
+
+100 
+
+144 
+
+AN 
+
+Space-filled 
+
+
+
+
+Account Interest Detail (2255) Record 
+
+The Account Interest Detail record contains detailed interest rate information for this 
+deposit account during the statement period. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+2255 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the account 
+information in this detail record 
+
+Effective Date 
+
+10 
+
+39 
+
+AN 
+
+Effective date (MM-DD-YYYY) of 
+the interest rate specified in this 
+detail record 
+
+Interest Rate 
+
+6 
+
+49 
+
+N 
+
+Interest rate associated with the 
+effective date of this detail record 
+
+Inactive date 
+
+10 
+
+55 
+
+AN 
+
+Inactive date (MM-DD-YYYY) for 
+the interest rate in this detail record, 
+if applicable 
+
+Filler 
+
+100 
+
+65 
+
+AN 
+
+Space-filled 
+
+
+
+Reg DD Fee Summary (2260) Record 
+
+The Reg DD Fee Summary record contains the net amount of overdraft and returned 
+item fees for the current statement period. Individual overdraft and returned item fee 
+amounts are not provided. 
+
+Note: The Overdraft Disclosure (RDDS) variable must be set to Y (Print) to include the 
+Reg DD Fee Summary section. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+2260 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record 
+
+Total OD Fees for 
+this Period 
+(ODFeesNet) 
+
+11 
+
+39 
+
+N 
+
+Total amount of overdraft fees for 
+paid items for the current 
+statement period 
+
+YTD OD Fees 
+(YTDTotODFees) 
+
+11 
+
+50 
+
+N 
+
+Year-to-date total amount of 
+overdraft fees for paid items (OD 
+fees paid minus OD fees 
+reversed) 
+
+Total Returned Item 
+Fees for this Period 
+(ODFeesRetnNet) 
+
+11 
+
+61 
+
+N 
+
+Total amount of returned item 
+(NSF) fees for paid items for the 
+current statement period 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+YTD Returned OD 
+(YTDTotRetODFees) 
+
+11 
+
+72 
+
+N 
+
+Year-to date total amount of 
+returned items (OD fees returned 
+minus OD fees returned reversed) 
+
+Filler 
+
+100 
+
+127 
+
+AN 
+
+Space-filled 
+
+
+
+Deposit Account Transaction Detail (2500) Record 
+
+The Deposit Account Transaction Detail record contains detailed transaction information 
+for this deposit account during the statement period. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+2500 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record 
+
+Post Date 
+
+10 
+
+39 
+
+AN 
+
+Transaction posting date (MM-
+DD-YYYY) 
+
+Effective Date 
+
+10 
+
+49 
+
+AN 
+
+Effective date (MM-DD-YYYY) of 
+the transaction 
+
+Credit/Debit 
+Indicator 
+
+1 
+
+59 
+
+A 
+
+Indicates whether the transaction 
+is a credit or debit: 
+
+C = Transaction is a credit 
+
+D = Transaction is a debit 
+
+Amount 
+
+11 
+
+60 
+
+N 
+
+Amount of the transaction 
+
+Transaction Code 
+
+4 
+
+71 
+
+AN 
+
+Code for the type of transaction 
+(RtxnTyp). Right-padded with 
+spaces. 
+
+Status Code 
+
+4 
+
+75 
+
+AN 
+
+Status code for the transaction. 
+Right-padded with spaces. 
+
+Transaction 
+Description 
+
+172 
+
+79 
+
+AN 
+
+Description of the transaction 
+type. Right-padded with spaces. 
+
+Note: The balance category 
+description is included if the 
+Transaction Detail (TRDL) 
+variable = Y. 
+
+Trace Number 
+
+20 
+
+251 
+
+AN 
+
+Trace number, if applicable. Left-
+padded with zeroes. 
+
+Account Balance 
+
+13 
+
+271 
+
+N 
+
+Account balance (9(11)V99) prior 
+to processing the transaction 
+
+Activity Date 
+
+10 
+
+284 
+
+AN 
+
+Original activity date (MM-DD-
+YYYY) 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Rtxn Number 
+
+12 
+
+294 
+
+AN 
+
+Unique transaction ID number 
+
+Terminal ID 
+
+16 
+
+306 
+
+AN 
+
+Terminal ID where the transaction 
+was processed. Right-padded 
+with spaces. 
+
+Check Number 
+
+12 
+
+322 
+
+AN 
+
+Number on the check, if 
+applicable. Left-padded with 
+zeroes. 
+
+External Rtxn 
+Number 
+
+12 
+
+334 
+
+AN 
+
+External transaction description 
+number 
+
+Internal Rtxn 
+Number 
+
+12 
+
+346 
+
+AN 
+
+Internal transaction description 
+number 
+
+Prior Available 
+Balance 
+
+13 
+
+358 
+
+N 
+
+Prior available balance 
+
+Note: Space-filled for 
+summarized checks when the 
+Checks in Detail (CKCD) variable 
+= 3 or 4. 
+
+Full Check Number 
+
+22 
+
+371 
+
+AN 
+
+Number on the check, if 
+applicable. Left-filled with zeroes. 
+
+Filler 
+
+65 
+
+393 
+
+AN 
+
+Space-filled 
+
+
+
+
+Checking Detail Transaction (3000) Record 
+
+The Checking Detail Transaction record contains detailed check transaction information 
+for this deposit account during the statement period. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+3000 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record 
+
+Post Date 
+
+10 
+
+39 
+
+AN 
+
+Transaction posting date (MM-DD-
+YYYY) 
+
+Amount 
+
+11 
+
+49 
+
+N 
+
+Amount (9(9)V99) of the transaction 
+
+Transaction Code 
+
+4 
+
+60 
+
+AN 
+
+Code for the type of transaction 
+(RtxnTyp). Right-padded with 
+spaces. 
+
+Note: Electronic checks have a 
+transaction code of ECHK and the 
+Check Missing Character is Y. 
+
+Check Number 
+
+12 
+
+64 
+
+N 
+
+Number on the check. Left-padded 
+with zeroes. 
+
+Checks Missing 
+Character 
+
+1 
+
+76 
+
+AN 
+
+Y = Check number is missing in the 
+sequence 
+
+N = No missing check number 
+
+Rtxn Number 
+
+12 
+
+77 
+
+AN 
+
+Unique transaction ID number. 
+Zero-padded. 
+
+Prior Available 
+Balance 
+
+13 
+
+89 
+
+N 
+
+Prior available balance 
+
+Full Check Number 
+
+22 
+
+102 
+
+N 
+
+Number on the check, if applicable. 
+Left-filled with zeroes. 
+
+Filler 
+
+65 
+
+124 
+
+AN 
+
+Space-filled 
+
+
+
+
+Check Image (3050) Record 
+
+The Check Image record contains detailed transaction information for the imaged checks 
+for this deposit account during the statement period. 
+
+Note: Only included when the Include Image record(3050)YN (XTIM) variable is set to Y. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+3050 
+
+Primary account 
+number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record 
+
+Image post date 
+
+10 
+
+39 
+
+AN 
+
+Transaction posting date (MM-DD-
+YYYY) 
+
+Trace Number 
+
+10 
+
+49 
+
+N 
+
+Trace number, if applicable. Left-
+padded with zeroes. 
+
+Check Number 
+
+12 
+
+59 
+
+N 
+
+Number on the check. Left-padded 
+with zeroes. 
+
+Transaction Amount 
+
+11 
+
+71 
+
+N 
+
+Amount (9(9)V99) of the transaction 
+
+Full Check Number 
+
+22 
+
+82 
+
+N 
+
+Number on the check, if applicable. 
+Left-filled with zeroes. 
+
+Filler 
+
+78 
+
+104 
+
+AN 
+
+Space-filled 
+
+
+
+ATM Detail Transaction (3100) Record 
+
+The ATM Detail Transaction record contains detailed ATM transaction information for 
+this deposit account during the statement period. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+3100 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record 
+
+Post Date 
+
+10 
+
+39 
+
+AN 
+
+Transaction posting date (MM-DD-
+YYYY) 
+
+Amount 
+
+11 
+
+49 
+
+N 
+
+Transaction amount (9(9)V99) 
+
+Transaction Code 
+
+4 
+
+60 
+
+AN 
+
+ATM transaction type (RtxnTyp) 
+code for the transaction. Right-
+padded with spaces. 
+
+Status Code 
+
+4 
+
+64 
+
+AN 
+
+Transaction status code. Right-
+padded with spaces. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Description 
+
+189 
+
+68 
+
+AN 
+
+Transaction description. Right-
+padded with spaces. 
+
+Rtxn Number 
+
+12 
+
+257 
+
+AN 
+
+Unique transaction ID number. 
+Zero-padded. 
+
+Filler 
+
+100 
+
+269 
+
+AN 
+
+Space-filled 
+
+
+
+Service Charge Transaction (3200) Record 
+
+The Service Charge Transaction record contains service charge transaction information 
+for this deposit account during the statement period. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+3200 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record 
+
+Post Date 
+
+10 
+
+39 
+
+AN 
+
+Transaction posting date (MM-DD-
+YYYY). Right-padded with spaces. 
+
+Amount 
+
+11 
+
+49 
+
+N 
+
+Service charge amount (9(9)V99) 
+
+Transaction Code 
+
+4 
+
+60 
+
+AN 
+
+Transaction type (RtxnTyp) code for 
+the transaction. Right-padded with 
+spaces. 
+
+Status Code 
+
+4 
+
+64 
+
+AN 
+
+Transaction status code 
+
+Description 
+
+189 
+
+68 
+
+AN 
+
+Transaction description. Right-
+padded with spaces. 
+
+Rtxn Number 
+
+12 
+
+257 
+
+AN 
+
+Unique transaction ID number. 
+Zero-padded 
+
+Filler 
+
+100 
+
+269 
+
+AN 
+
+Space-filled 
+
+
+
+
+Account Balance (3300) Record 
+
+The Account Balance record contains balance information for this deposit account during 
+the statement period. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+3300 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record 
+
+Post Date 
+
+10 
+
+39 
+
+AN 
+
+Posting date (MM-DD-YYYY) for 
+the listed balance 
+
+Amount 
+
+13 
+
+49 
+
+N 
+
+Account balance (9(11)V99) as of 
+the posting date 
+
+Filler 
+
+100 
+
+62 
+
+AN 
+
+Space-filled 
+
+
+
+Automated Settlement Transactions (3500) Record 
+
+The Automated Settlement Transaction record contains automated settlement 
+transactions for Corporate Credit Unions. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+3500 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record 
+
+Post Date 
+
+10 
+
+39 
+
+AN 
+
+Transaction posting date (MM-DD-
+YYYY) 
+
+Effective Date 
+
+10 
+
+49 
+
+AN 
+
+Effective date (MM-DD-YYYY) of 
+the transaction 
+
+Credit / Debit 
+Indicator 
+
+1 
+
+59 
+
+A 
+
+Indicates if the transaction is a 
+Credit (C) or Debit (D): 
+
+DEPD = Credit 
+
+WTHD = Debit 
+
+Amount 
+
+11 
+
+60 
+
+N 
+
+Transaction amount (9(9)V99) 
+
+Transaction Code 
+
+4 
+
+71 
+
+AN 
+
+Transaction type (RtxnTyp) code for 
+the transaction. Right-padded with 
+spaces. 
+
+Status Code 
+
+4 
+
+75 
+
+AN 
+
+Transaction status code. Right-
+padded with spaces. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Description 
+
+189 
+
+79 
+
+AN 
+
+Transaction description. Right-
+padded with spaces. 
+
+Rtxn Number 
+
+12 
+
+268 
+
+AN 
+
+Unique transaction ID number. 
+Zero-padded. 
+
+Originator Name 
+
+40 
+
+280 
+
+AN 
+
+Name of the originator of the 
+transaction based on the name of 
+the organization with the ORGNBR 
+specified in the ORGEXTORGID 
+business table entry for the 
+specified originator number. Right-
+padded with spaces. 
+
+Originator Number 
+
+9 
+
+320 
+
+AN 
+
+External organization number 
+assigned to the institution by the 
+external organization and the 
+external identification number for 
+the file from the originator of the 
+transaction (based on the 
+EXTORGNBR and EXTID values in 
+the ORGEXTORGID business table 
+entry for the originator’s 
+organization). Right-padded with 
+spaces. 
+
+Filler 
+
+100 
+
+329 
+
+AN 
+
+Space-filled 
+
+
+
+Loan Account Summary (4000) Record 
+
+The Loan Account Summary record contains summary data for a loan linked to the 
+primary deposit account. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4000 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record 
+
+Major 
+
+4 
+
+39 
+
+AN 
+
+Major account type code for the 
+account. Right-padded with spaces. 
+
+Minor 
+
+4 
+
+43 
+
+AN 
+
+Minor account type code for the 
+account. Right-padded with spaces. 
+
+Minor Product 
+Description 
+
+30 
+
+47 
+
+AN 
+
+Description associated with the 
+minor account type. Right-padded 
+with spaces. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Starting Balance 
+
+11 
+
+77 
+
+N 
+
+Balance (9(9)V99) at the start of the 
+statement period. 
+
+Note: For master line accounts, this 
+is the sum of all sub-accounts. 
+
+Ending Balance 
+
+11 
+
+88 
+
+N 
+
+Balance (9(9)V99) at the end of the 
+statement period. 
+
+Note: For master line accounts, this 
+is the sum of all sub-accounts. 
+
+Interest Paid Year-
+To-Date 
+
+11 
+
+99 
+
+N 
+
+Current YTD interest amount 
+(9(9)V99) at the end of the 
+statement period. 
+
+Note: For master line accounts, this 
+is the sum of all sub-accounts. 
+
+Late Charges 
+
+11 
+
+110 
+
+N 
+
+Total late charges (9(9)V99) for the 
+statement period. 
+
+Note: For master line accounts, this 
+is the sum of all sub-accounts. 
+
+Past Due Amount 
+
+11 
+
+121 
+
+N 
+
+Past due amount (9(9)V99) at the 
+end of the statement period. 
+
+Note: For master line accounts, this 
+is the sum of all sub-accounts. 
+
+Credit Limit 
+
+11 
+
+132 
+
+N 
+
+Credit limit (9(9)V99) for the loan 
+
+Escrow Balance 
+
+11 
+
+143 
+
+N 
+
+Escrow balance (9(9)V99) at the 
+end of the statement period 
+
+Next Payment 
+Amount 
+
+11 
+
+154 
+
+N 
+
+Next payment amount due 
+(9(9)V99). 
+
+Note: For master line accounts, this 
+is the sum of all sub-accounts. 
+
+Interest Paid This 
+Cycle 
+
+11 
+
+165 
+
+N 
+
+Total interest paid for the statement 
+period (9(9)V99). 
+
+Note: For master line accounts, this 
+is the sum of all sub-accounts. 
+
+Average Daily 
+Balance for Rate 1 
+
+11 
+
+176 
+
+N 
+
+Average daily balance (9(9)V99) as 
+of the beginning of the statement 
+cycle. Balance reflected is either 
+through the cycle end date or to the 
+next rate change in the statement 
+cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Average Daily 
+Balance for Rate 2 
+
+11 
+
+187 
+
+N 
+
+Average daily balance (9(9)V99) as 
+of the first rate change within the 
+statement cycle. Balance reflected 
+is either through end of statement 
+cycle or to the next rate change in 
+the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Average Daily 
+Balance for Rate 3 
+
+11 
+
+198 
+
+N 
+
+Average daily balance (9(9)V99) as 
+of the second rate change within 
+the statement cycle. Balance 
+reflected is either through the cycle 
+end date or to the next rate change 
+in the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Average Daily 
+Balance for Rate 4 
+
+11 
+
+209 
+
+N 
+
+Average daily balance (9(9)V99) as 
+of the third rate change within the 
+statement cycle. Balance reflected 
+is either through the cycle end date 
+or to the next rate change in the 
+statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Average Daily 
+Balance for Rate 5 
+
+11 
+
+220 
+
+N 
+
+Average daily balance (9(9)V99) as 
+of the fourth rate change within the 
+statement cycle. Balance reflected 
+is either through the cycle end date 
+or to the next rate change in the 
+statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Number of Days for 
+Rate 1 
+
+3 
+
+231 
+
+N 
+
+Number of days (999) in the 
+statement cycle as of the beginning 
+of the cycle and through either the 
+cycle end date or to the next rate 
+change in the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Number of Days for 
+Rate 2 
+
+3 
+
+234 
+
+N 
+
+Number of days (999) in the 
+statement cycle as of the first rate 
+change for the cycle period. This 
+change is through either the cycle 
+end date or to the next rate change 
+in the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Number of Days for 
+Rate 3 
+
+3 
+
+237 
+
+N 
+
+Number of days (999) in the 
+statement cycle as of the second 
+rate change for the cycle period. 
+This change is through either the 
+cycle end date or to the next rate 
+change in the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Number of Days for 
+Rate 4 
+
+3 
+
+240 
+
+N 
+
+Number of days (999) in the 
+statement cycle as of the third rate 
+change for the cycle period. This 
+change is through either the cycle 
+end date or to the next rate change 
+in the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Number of Days for 
+Rate 5 
+
+3 
+
+243 
+
+N 
+
+Number of days (999) in the 
+statement cycle as of the fourth rate 
+change for the cycle period. This 
+change is through either the cycle 
+end date or to the next rate change 
+in the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+APR for Rate 1 
+
+8 
+
+246 
+
+N 
+
+APR (999) as of the beginning of 
+the statement cycle. APR applies 
+through either the cycle end date or 
+to the next rate change in the 
+statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+APR for Rate 2 
+
+8 
+
+254 
+
+N 
+
+APR (999) as of the first rate 
+change within the statement cycle. 
+APR applies through either the 
+cycle end date or to the next rate in 
+the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+APR for Rate 3 
+
+8 
+
+262 
+
+N 
+
+APR (999) as of the second rate 
+change within the statement cycle. 
+APR applies through either the 
+cycle end date or to the next rate in 
+the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+APR for Rate 4 
+
+8 
+
+270 
+
+N 
+
+APR (999) as of the third rate 
+change within the statement cycle. 
+APR applies through either the 
+cycle end date or to the next rate in 
+the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+APR for Rate 5 
+
+8 
+
+278 
+
+N 
+
+APR (999) as of the fourth rate 
+change within the statement cycle. 
+APR applies through either the 
+cycle end date or to the next rate in 
+the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Advances 
+
+11 
+
+286 
+
+N 
+
+Sum of advances (9(9)V9) during 
+the statement period. 
+
+Note: For master line accounts, this 
+is the sum of all sub-accounts. 
+
+Account Description 
+
+40 
+
+297 
+
+AN 
+
+Account description included in the 
+statement extract. Right-padded 
+with spaces. 
+
+Start Transaction 
+Date 
+
+10 
+
+337 
+
+N 
+
+Beginning statement date 
+(MM-DD-YYYY) 
+
+End Transaction Date 
+
+10 
+
+347 
+
+N 
+
+Ending statement date 
+(MM-DD-YYYY) 
+
+Payments Received 
+This Period 
+
+11 
+
+357 
+
+N 
+
+Total payments (9(9)V99) received 
+during the statement period 
+
+Note: For master line accounts, this 
+is the sum of all sub-accounts. 
+
+Available Credit 
+Amount 
+
+11 
+
+368 
+
+N 
+
+Available credit (9(9)V99) as of the 
+statement end date, based on the 
+Credit Limit minus Principal 
+
+Payment Due Date 
+
+10 
+
+379 
+
+AN 
+
+Next loan due date (MM-DD-YYYY) 
+
+Major Product 
+Description 
+
+30 
+
+389 
+
+AN 
+
+Description of the major account 
+type. Right-padded with spaces. 
+
+Minor Customer 
+Description 
+
+30 
+
+419 
+
+AN 
+
+Consumer-defined description for 
+the account’s product. Right-
+padded with spaces. 
+
+Contract Date 
+
+10 
+
+449 
+
+AN 
+
+Account contract date (MM-DD-
+YYYY). 
+
+Master Line Account 
+YN 
+
+1 
+
+459 
+
+AN 
+
+Y = Account is a master line 
+account 
+
+N = Not a master line account 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Payment Allotment 
+YN 
+
+1 
+
+460 
+
+AN 
+
+Y = Payment is made using an 
+allotment 
+
+N = No payment made using an 
+allotment 
+
+Payment Allotment 
+Grace Date 
+
+10 
+
+461 
+
+AN 
+
+Grace date (MM-DD-YYYY) defined 
+for the payment allotment. Left-
+padded with zeroes. 
+
+Payment Allotment 
+Account Number 
+
+17 
+
+471 
+
+N 
+
+Account number debited for a loan 
+payment made through an 
+allotment. Left-padded with zeroes. 
+
+Payment Allotment 
+External Routing 
+Number 
+
+9 
+
+488 
+
+N 
+
+Routing number of the external 
+institution for an external allotment. 
+(If this is an internal allotment, the 
+field is zero-filled.) 
+
+LIP Indicator 
+
+1 
+
+497 
+
+A 
+
+Y = Account has LIP balances 
+
+N = No LIP balances 
+
+LIP Disbursed 
+
+11 
+
+498 
+
+N 
+
+Total LIP disbursed (9(9)V99) 
+
+LIP Remaining 
+
+11 
+
+509 
+
+N 
+
+Total LIP remaining (9(9)V99) 
+
+Grace Date 
+
+10 
+
+520 
+
+AN 
+
+Date on which the loan is assessed 
+a late charge if no payment made 
+
+Filler 
+
+123 
+
+530 
+
+AN 
+
+Space-filled 
+
+Prior Year’s Interest 
+Paid 
+
+11 
+
+653 
+
+N 
+
+Amount of loan interest paid in the 
+prior year. Left-padded with zeroes. 
+
+Combined Loan Bill 
+Statement YN 
+
+1 
+
+664 
+
+AN 
+
+Y = Statement is used in place of a 
+separate loan bill 
+
+N = No statement used in place of a 
+separate loan bill 
+
+Filler 
+
+10 
+
+665 
+
+AN 
+
+Space-filled 
+
+Potential Late Charge 
+
+11 
+
+675 
+
+N 
+
+Potential late charge amount 
+
+Filler 
+
+1 
+
+686 
+
+AN 
+
+Space-filled 
+
+
+
+
+Loan Account Interest Summary (4050) Record 
+
+The Loan Account Interest Summary record contains interest information for the loan. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4050 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement. Left-
+padded with zeroes. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record. 
+Left-padded with zeroes. 
+
+Interest Rate 
+
+6 
+
+39 
+
+N 
+
+Note rate 
+
+Daily Periodic Rate 
+
+6 
+
+45 
+
+N 
+
+Daily interest rate (V999999) 
+
+Effective Date 
+
+10 
+
+51 
+
+AN 
+
+Effective date (MM-DD-YYYY) of 
+the current interest rate 
+
+Days in Period 
+
+4 
+
+61 
+
+N 
+
+Number of days (9999) in the 
+current statement cycle 
+
+Average Daily 
+Balance 
+
+11 
+
+65 
+
+N 
+
+Average daily balance (9(9)V99) for 
+the current statement cycle 
+
+Rate Type 
+
+4 
+
+76 
+
+AN 
+
+Rate type set on the account. Right-
+padded with spaces. 
+
+Filler 
+
+96 
+
+80 
+
+AN 
+
+Space-filled 
+
+
+
+Loan Detail Transaction (4100) Record 
+
+The Loan Detail Transaction record contains transaction information for a loan that is 
+linked to the primary deposit account. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4100 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record. 
+Left-padded with zeroes. 
+
+Post Date 
+
+10 
+
+39 
+
+AN 
+
+Posting date (MM-DD-YYYY) for 
+the transaction. Right-padded with 
+spaces. 
+
+Effective Date 
+
+10 
+
+49 
+
+AN 
+
+Effective date (MM-DD-YYYY) for 
+the transaction. Right-padded with 
+spaces. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Credit / Debit 
+Indicator 
+
+1 
+
+59 
+
+A 
+
+Indicates if the transaction is a 
+credit or debit: 
+
+C = Credit 
+
+D = Debit 
+
+Amount 
+
+11 
+
+60 
+
+N 
+
+Total amount (9(9)V99) 
+
+Transaction Code 
+
+4 
+
+71 
+
+AN 
+
+Transaction type (RtxnTyp) code for 
+the transaction. Right-padded with 
+spaces. 
+
+Status Code 
+
+4 
+
+75 
+
+AN 
+
+Transaction status code. Right-
+padded with spaces. 
+
+Transaction 
+Description 
+
+172 
+
+79 
+
+AN 
+
+Transaction description based on 
+the transaction type code. Right-
+padded with spaces. 
+
+Account Balance 
+
+11 
+
+251 
+
+N 
+
+Running balance (9(9)V99) in the 
+account after the transaction 
+
+Principal Amount 
+
+11 
+
+262 
+
+N 
+
+Principal payment (9(9)V99) in 
+transaction 
+
+Finance Charge 
+Amount 
+
+11 
+
+273 
+
+N 
+
+Interest amount (9(9)V99) in 
+transaction 
+
+Other Charges 
+Amount 
+
+11 
+
+284 
+
+N 
+
+Other charges (9(9)V99) in 
+transaction amount 
+
+Rtxn Number 
+
+12 
+
+295 
+
+AN 
+
+Unique transaction ID number. 
+Zero-padded. 
+
+Check Number 
+
+12 
+
+307 
+
+AN 
+
+Check number for the check 
+associated with the transaction. 
+Space-padded. 
+
+External Rtxn 
+Number 
+
+12 
+
+319 
+
+AN 
+
+External transaction number. Zero-
+padded. 
+
+Internal Rtxn Number 
+
+12 
+
+331 
+
+AN 
+
+Internal transaction number. Zero-
+padded. 
+
+Escrow Amount 
+
+11 
+
+343 
+
+N 
+
+Escrow amount (9(9)V99) included 
+in the loan transaction 
+
+Reg Z Rtxn Type 
+
+1 
+
+354 
+
+AN 
+
+Report group category assigned to 
+the transaction: 
+
+F = ZFEE 
+
+I = ZINT 
+
+Full Check Number 
+
+22 
+
+355 
+
+AN 
+
+Number on the check, if applicable. 
+Left-filled with zeroes. 
+
+Filler 
+
+30 
+
+377 
+
+AN 
+
+Space-filled 
+
+
+
+
+Loan Return Payment Address (4125) Record 
+
+The Loan Return Payment Address record contains address information required to 
+remit payments. This information is applicable to the loan billing portion of the statement. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4125 
+
+Primary Account 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement. Left 
+padded and zero filled. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record. 
+Left padded and zero filled 
+
+Remit to Name and 
+Address Information 
+
+40 
+
+39 
+
+AN 
+
+Return name and address to 
+displays on the return payment 
+portion of the loan payment 
+
+Filler 
+
+100 
+
+79 
+
+AN 
+
+Space-filled 
+
+
+
+Historical APR (4150) Record 
+
+The Historical APR record contains the historical APR for the listed account. A historical 
+APR exists when the system recalculates the loan’s APR due to a skip/extend payment 
+on an account where the RECALCULATE HISTORICAL APR checkbox is selected on the 
+Balance Types screen for the product. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4150 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement. Left-
+padded with zeroes. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record. 
+Left-padded with zeroes. 
+
+Historical APR 
+
+6 
+
+39 
+
+N 
+
+Historical APR (999V999) for the 
+specified account 
+
+Filler 
+
+100 
+
+45 
+
+AN 
+
+Space-filled 
+
+
+
+
+Loan Account Reg Z Information (4175) Record 
+
+Loan Account Reg Z Information record provides fields required by the Regulation Z 
+ruling. This record is generated when the Reg Z Open End Credit Product (RZOE) 
+variable = Y and the Loan Activity Section Type (ACTP) variable = 5. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record Id 
+
+4 
+
+1 
+
+N 
+
+4175 
+
+Primary Account 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement. Left-
+padded with zeroes. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record. 
+Left-padded with zeroes. 
+
+Interest Charged this 
+Period 
+
+11 
+
+39 
+
+N 
+
+Total amount of all interest charged 
+during the current billing cycle 
+
+Interest Charged 
+YTD 
+
+11 
+
+50 
+
+N 
+
+Total amount of all interest charged 
+during the current cycle year 
+
+Fees Charged this 
+Period 
+
+11 
+
+61 
+
+N 
+
+Total amount of all fees charged 
+during the current billing cycle 
+
+Fees Charged YTD 
+
+11 
+
+72 
+
+N 
+
+Total amount of all fees charged 
+during the current cycle year 
+
+Bill Error Inquiries 
+Phone Nbr 
+
+10 
+
+83 
+
+N 
+
+Institution's telephone number used 
+by borrowers for billing inquiries 
+
+Bill Error Inquiries 
+Name and Address 
+
+130 
+
+93 
+
+AN 
+
+Institution address to be used by 
+borrowers to report billing errors 
+
+Filler 
+
+100 
+
+223 
+
+AN 
+
+Space-filled 
+
+
+
+Master Line Sub-Loan Account Summary (4500) Record 
+
+The Master Line Sub-Loan Summary record contains summary data for a loan linked to 
+a master line account. This record is only available in the MM_STMXT extract file. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4500 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account on the statement 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the master line 
+sub-loan account in this record 
+
+Master Line Account 
+Number 
+
+17 
+
+39 
+
+N 
+
+Account number for the master line 
+linked to the sub-loan account 
+
+Major 
+
+4 
+
+56 
+
+AN 
+
+Major account type code for the 
+account. Right-padded with spaces. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Minor 
+
+4 
+
+60 
+
+AN 
+
+Minor account type code for the 
+account. Right-padded with spaces. 
+
+Minor Product 
+Description 
+
+30 
+
+64 
+
+AN 
+
+Description of the product from the 
+minor account type. Right-padded 
+with spaces. 
+
+Starting Balance 
+
+11 
+
+94 
+
+N 
+
+Balance (9(9)V99) at the start of the 
+statement period 
+
+Ending Balance 
+
+11 
+
+105 
+
+N 
+
+Balance (9(9)V99) at the end of the 
+statement period 
+
+Interest Paid Year-
+To-Date 
+
+11 
+
+116 
+
+N 
+
+Current YTD interest paid 
+(9(9)V99) as of the end of the 
+statement period 
+
+Late Charges 
+
+11 
+
+127 
+
+N 
+
+Total late charges (9(9)V99) for the 
+statement period 
+
+Past Due Amount 
+
+11 
+
+138 
+
+N 
+
+Past due amount (9(9)V99) as of 
+the end of the statement period 
+
+Credit Limit 
+
+11 
+
+149 
+
+N 
+
+Credit limit (9(9)V99) for the loan 
+
+Escrow Balance 
+
+11 
+
+160 
+
+N 
+
+Escrow balance (9(9)V99) as of the 
+end of the statement period 
+
+Next Payment 
+Amount 
+
+11 
+
+171 
+
+N 
+
+Amount (9(9)V9) of the next 
+payment due on the sub loan 
+account 
+
+Interest Paid This 
+Cycle 
+
+11 
+
+182 
+
+N 
+
+Total interest paid (9(9)V99) on the 
+sub loan account during the 
+statement period 
+
+Average Daily 
+Balance for Rate 1 
+
+11 
+
+193 
+
+N 
+
+Average daily balance (9(9)V99) as 
+of the beginning of the statement 
+cycle. Balance reflected is either 
+through the cycle end date or to the 
+next rate change in the statement 
+cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Average Daily 
+Balance for Rate 2 
+
+11 
+
+204 
+
+N 
+
+Average daily balance (9(9)V99) as 
+of the first rate change within the 
+statement cycle. Balance reflected 
+is either through end of statement 
+cycle or to the next rate change in 
+the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Average Daily 
+Balance for Rate 3 
+
+11 
+
+215 
+
+N 
+
+Average daily balance (9(9)V99) as 
+of the second rate change within 
+the statement cycle. Balance 
+reflected is either through the cycle 
+end date or to the next rate change 
+in the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Average Daily 
+Balance for Rate 4 
+
+11 
+
+226 
+
+N 
+
+Average daily balance (9(9)V99) as 
+of the third rate change within the 
+statement cycle. Balance reflected 
+is either through the cycle end date 
+or to the next rate change in the 
+statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Average Daily 
+Balance for Rate 5 
+
+11 
+
+237 
+
+N 
+
+Average daily balance (9(9)V99) as 
+of the fourth rate change within the 
+statement cycle. Balance reflected 
+is either through end of statement 
+cycle or to the next rate change in 
+the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Number of Days for 
+Rate 1 
+
+3 
+
+248 
+
+N 
+
+Number of days (999) in the 
+statement cycle as of the beginning 
+of the cycle and through either the 
+cycle end date or to the next rate 
+change in the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Number of Days for 
+Rate 2 
+
+3 
+
+251 
+
+N 
+
+Number of days (999) in the 
+statement cycle as of the first rate 
+change for the cycle period. This 
+change is through either the cycle 
+end date or to the next rate change 
+in the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Number of Days for 
+Rate 3 
+
+3 
+
+254 
+
+N 
+
+Number of days (999) in the 
+statement cycle as of the second 
+rate change for the cycle period. 
+This change is through either the 
+cycle end date or to the next rate 
+change in the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Number of Days for 
+Rate 4 
+
+3 
+
+257 
+
+N 
+
+Number of days (999) in the 
+statement cycle as of the third rate 
+change for the cycle period. This 
+change is through either the cycle 
+end date or to the next rate change 
+in the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Number of Days for 
+Rate 5 
+
+3 
+
+260 
+
+N 
+
+Number of days (999) in the 
+statement cycle as of the fourth rate 
+change for the cycle period. This 
+change is through either the cycle 
+end date or to the next rate change 
+in the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+APR for Rate 1 
+
+8 
+
+263 
+
+N 
+
+APR (999) as of the beginning of 
+the statement cycle. APR applies 
+through either the cycle end date or 
+to the next rate change in the 
+statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+APR for Rate 2 
+
+8 
+
+271 
+
+N 
+
+APR (999) as of the first rate 
+change within the statement cycle. 
+APR applies through either the 
+cycle end date or to the next rate in 
+the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+APR for Rate 3 
+
+8 
+
+279 
+
+N 
+
+APR (999) as of the second rate 
+change within the statement cycle. 
+APR applies through either the 
+cycle end date or to the next rate in 
+the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+APR for Rate 4 
+
+8 
+
+287 
+
+N 
+
+APR (999) as of the third rate 
+change within the statement cycle. 
+APR applies through either the 
+cycle end date or to the next rate in 
+the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+APR for Rate 5 
+
+8 
+
+295 
+
+N 
+
+APR (999) as of the fourth rate 
+change within the statement cycle. 
+APR applies through either the 
+cycle end date or to the next rate in 
+the statement cycle. 
+
+Note: This only applies to line of 
+credit loans. 
+
+Advances 
+
+11 
+
+303 
+
+N 
+
+Sum of advances (9(9)V9) on the 
+sub loan account during the 
+statement period 
+
+Account Description 
+
+40 
+
+314 
+
+AN 
+
+Account description included in the 
+statement extract. Right-padded 
+with spaces. 
+
+Start Transaction 
+Date 
+
+10 
+
+354 
+
+N 
+
+Beginning statement date (MM-DD-
+YYYY) 
+
+End Transaction Date 
+
+10 
+
+364 
+
+N 
+
+Ending statement date (MM-DD-
+YYYY) 
+
+Payments Received 
+This Period 
+
+11 
+
+374 
+
+N 
+
+Total payments (9(9)V99) received 
+during the statement period 
+
+Available Credit 
+Amount 
+
+11 
+
+385 
+
+N 
+
+Available credit (9(9)V99) on the 
+sub loan account as of the 
+statement period end date, based 
+on the credit limit minus the 
+principal 
+
+Payment Due Date 
+
+10 
+
+396 
+
+AN 
+
+Due date (MM-DD-YYYY) for the 
+next payment 
+
+Major Product 
+Description 
+
+30 
+
+406 
+
+AN 
+
+Major account type description for 
+the account. Right-padded with 
+spaces. 
+
+Minor Customer 
+Description 
+
+30 
+
+436 
+
+AN 
+
+Minor account type description for 
+the account. Right-padded with 
+spaces. 
+
+Contract Date 
+
+10 
+
+466 
+
+AN 
+
+Account contract date (MM-DD-
+YYYY) 
+
+Master Line Account 
+YN 
+
+1 
+
+476 
+
+AN 
+
+Y = Account is a master line 
+account 
+
+N = Not a master line account 
+
+Payment Allotment 
+YN 
+
+1 
+
+477 
+
+AN 
+
+Y = There is an allotment payment 
+for the loan 
+
+N = No allotment payment for the 
+loan 
+
+Payment Allotment 
+Grace Date 
+
+10 
+
+478 
+
+AN 
+
+Grace date (MM-DD-YYYY) 
+associated with the allotment 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Payment Allotment 
+Account Number 
+
+17 
+
+488 
+
+N 
+
+Account number for the allotment. 
+Left-padded with zeroes 
+
+Payment Allotment 
+External Routing 
+Number 
+
+ 
+
+9 
+
+505 
+
+N 
+
+Routing number of the external 
+institution for an external allotment 
+(if this is an internal allotment, the 
+field is zero filled). Left-padded with 
+zeroes. 
+
+LIP Indicator 
+
+1 
+
+514 
+
+A 
+
+Indicates if account has LIP 
+balances 
+
+LIP Disbursed 
+
+11 
+
+515 
+
+N 
+
+Total LIP disbursed (9(9)V99) 
+
+LIP Remaining 
+
+11 
+
+526 
+
+N 
+
+Total LIP remaining (9(9)V99) 
+
+Grace Date 
+
+10 
+
+537 
+
+AN 
+
+Date (MM-DD-YYYY) on which the 
+loan is assessed a late charge if no 
+payment is made 
+
+Filler 
+
+94 
+
+547 
+
+AN 
+
+For Canada/international use only 
+
+Prior Year’s Interest 
+Paid 
+
+11 
+
+641 
+
+N 
+
+Amount of loan interest paid in the 
+prior year. Left-padded with zeroes. 
+
+Combined Loan Bill 
+Statement YN 
+
+1 
+
+652 
+
+AN 
+
+Y = Statement is used in place of a 
+separate loan bill for the account 
+
+N = No statement is used in place 
+of a separate loan bill 
+
+Filler 
+
+10 
+
+653 
+
+AN 
+
+Space-filled 
+
+Potential Late Charge 
+
+11 
+
+663 
+
+N 
+
+Potential late charge amount 
+
+Filler 
+
+1 
+
+674 
+
+AN 
+
+Space-filled 
+
+
+
+Master Line Sub-Loan Account Interest Summary (4550) Record 
+
+The Master Line Sub-Loan Account Interest Summary record contains interest 
+information for a loan under the master line. This record is only available in the 
+MM_STMXT extract file. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4550 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the master line 
+sub-loan account in this record 
+
+Master Line Account 
+Number 
+
+17 
+
+39 
+
+N 
+
+Account number for the master line 
+account linked to the sub-loan 
+account 
+
+Interest Rate 
+
+6 
+
+56 
+
+N 
+
+Note rate 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Daily Periodic Rate 
+
+6 
+
+62 
+
+N 
+
+Daily interest rate (V999999) on the 
+sub loan account 
+
+Effective Date 
+
+10 
+
+68 
+
+AN 
+
+Effective date (MM-DD-YYYY) of 
+the current rate 
+
+Days in Period 
+
+4 
+
+78 
+
+N 
+
+Number of days (9999) in the 
+current period 
+
+Average Daily 
+Balance 
+
+11 
+
+82 
+
+N 
+
+Average daily balance (9(9)V99) in 
+the sub loan account for the period 
+
+Rate Type 
+
+4 
+
+93 
+
+AN 
+
+Rate type set on the account. Right-
+padded with spaces. 
+
+Filler 
+
+96 
+
+97 
+
+AN 
+
+Space-filled 
+
+
+
+Master Line Sub-Loan Account Reg Z Information (4575) Record 
+
+Master Line Sub-Loan Account Reg Z Information record provides fields required by the 
+Reg Z ruling. This record is generated when the sub-account’s Reg Z Open End Credit 
+Product (RZOE) variable = Y and the Loan Activity Section Type (ACTP) variable under 
+the Loan Bill (BILL) calculation type = 5 (or the Loan Activity Section Type (ACTP) 
+variable under the Master Line Bill Processing (MLBL) calculation type = 5). 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4575 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account. Left-padded with zeroes. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the sub-
+account in this record. Left-padded 
+with zeroes. 
+
+Master Line Account 
+Number 
+
+17 
+
+39 
+
+N 
+
+Account number for the master line. 
+Left-padded with zeroes. 
+
+Interest Charged this 
+Period 
+
+11 
+
+56 
+
+N 
+
+Total amount of all interest charged 
+during the current billing cycle 
+
+Interest Charged 
+YTD 
+
+11 
+
+67 
+
+N 
+
+Total amount of all interest charged 
+during the current cycle year 
+
+Fees Charged this 
+Period 
+
+11 
+
+78 
+
+N 
+
+Total amount of all fee charges 
+during the current billing cycle 
+
+Fees Charged YTD 
+
+11 
+
+89 
+
+N 
+
+Total amount of all fee charges 
+during the current statement cycle 
+year 
+
+Bill Error Inquiry 
+Phone Nbr 
+
+10 
+
+100 
+
+N 
+
+Institution's telephone number used 
+by borrowers for billing inquiries 
+
+Bill Error Inquiries 
+Name and Address 
+
+130 
+
+110 
+
+AN 
+
+Institution address to be used by 
+borrowers to report billing errors 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Filler 
+
+100 
+
+240 
+
+AN 
+
+Space-filled 
+
+
+
+Master Line Sub-Loan Detail Transaction (4600) Record 
+
+The Master Line Sub-Loan Detail Transaction record contains transaction information for 
+the current sub-loan. This record is only available in the MM_STMXT extract file. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4600 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the master line 
+sub-loan account in this record 
+
+Master Line Account 
+Number 
+
+17 
+
+39 
+
+N 
+
+Account number for the master line 
+account linked to the sub-loan 
+account 
+
+Post Date 
+
+10 
+
+56 
+
+AN 
+
+Posting date (MM-DD-YYYY) for 
+the transaction 
+
+Effective Date 
+
+10 
+
+66 
+
+AN 
+
+Effective date (MM-DD-YYYY) for 
+the transaction 
+
+Credit / Debit 
+Indicator 
+
+1 
+
+76 
+
+A 
+
+Indicates if the transaction is a 
+credit or debit: 
+
+C = Credit 
+
+D = Debit 
+
+Amount 
+
+11 
+
+77 
+
+N 
+
+Total amount (9(9)V99) of the 
+transaction 
+
+Transaction Code 
+
+4 
+
+88 
+
+AN 
+
+Transaction type (RtxnTyp) code for 
+the transaction. Right-padded with 
+spaces. 
+
+Status Code 
+
+4 
+
+92 
+
+AN 
+
+Transaction status code. Right-
+padded with spaces. 
+
+Transaction 
+Description 
+
+172 
+
+96 
+
+AN 
+
+Transaction description based on 
+the transaction type code. Right-
+padded with spaces. 
+
+Account Balance 
+
+11 
+
+268 
+
+N 
+
+Running balance (9(9)V99) in the 
+account after the transaction 
+
+Principal Amount 
+
+11 
+
+279 
+
+N 
+
+Principal payment (9(9)V99) in 
+transaction 
+
+Finance Charge 
+Amount 
+
+11 
+
+290 
+
+N 
+
+Interest amount (9(9)V99) in 
+transaction 
+
+Other Charges 
+Amount 
+
+11 
+
+301 
+
+N 
+
+Other charges in transaction 
+amount (9(9)V99) 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Rtxn Number 
+
+12 
+
+312 
+
+AN 
+
+Unique transaction ID number 
+
+Check Number 
+
+12 
+
+324 
+
+AN 
+
+Check number for the check 
+associated with the transaction. 
+Space-padded. 
+
+External Rtxn 
+Number 
+
+12 
+
+336 
+
+AN 
+
+External transaction description 
+number. Zero-padded. 
+
+Internal Rtxn Number 
+
+12 
+
+348 
+
+AN 
+
+Internal transaction description 
+number 
+
+Escrow Amount 
+
+11 
+
+360 
+
+N 
+
+Escrow amount (9(9)V99) included 
+in the loan transaction 
+
+Reg Z Rtxn Type 
+
+1 
+
+371 
+
+AN 
+
+Report group category assigned to 
+the transaction: 
+
+F = ZFEE 
+
+I = ZINT 
+
+Full Check Number 
+
+22 
+
+372 
+
+AN 
+
+Number on the check, if applicable. 
+Left-filled with zeroes. 
+
+Filler 
+
+30 
+
+394 
+
+AN 
+
+Space-filled 
+
+
+
+Account Trailer (8000) Record 
+
+The Account Trailer record is the last record for a specific account. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+8000 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account. Zero-padded. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the listed 
+account information in this record. 
+Zero-padded. 
+
+Filler 
+
+100 
+
+39 
+
+AN 
+
+Space-filled 
+
+
+
+ 
+
+
+Statement Trailer (8900) Record 
+
+The Statement Trailer record is the last record for all the accounts for a primary account 
+statement. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+8900 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary 
+account. Zero-padded 
+
+Nines Filler 
+
+17 
+
+22 
+
+N 
+
+Filled with all nines 
+
+Statement Record 
+Count 
+
+9 
+
+39 
+
+N 
+
+Number of records. Zero-padded. 
+
+Filler 
+
+100 
+
+48 
+
+AN 
+
+Space-filled 
+
+
+
+File Control (9000) Record 
+
+The File Control record contains a record count for each previously generated record 
+format. These records are used for balancing purposes. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+9000 
+
+Nines Filler 
+
+34 
+
+5 
+
+N 
+
+Filled with all nines 
+
+Record ID 
+
+4 
+
+39 
+
+N 
+
+Record ID of the record included in 
+the file 
+
+Count 
+
+9 
+
+43 
+
+N 
+
+Count of the items associated with 
+the specified Record ID. Zero-
+padded. 
+
+Filler 
+
+100 
+
+52 
+
+AN 
+
+Space-filled 
+
+
+
+End of File (9999) Record 
+
+The End of File record is the last record of the statement extract file. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+9999 
+
+Nines Filler 
+
+47 
+
+5 
+
+N 
+
+Filled with all nines 
+
+Filler 
+
+100 
+
+52 
+
+AN 
+
+Space-filled 
+
+
+
+
+Statement Extract with Dodd-Frank Bill Records 
+(MM_STMXT_DFBILLRECS) Report 
+
+Description 
+
+The Statement Extract with Dodd-Frank Bill Records (MM_STMXT_DFBILLRECS) 
+report generates an extract file to provide additional records containing the information 
+required in statements as a result of the Dodd-Frank Act and CFPB rules. This report is 
+run as a post-process of the Statement Extract (MM_STMXT) report and provides the 
+information for loans in product(s) with the Dodd Frank Mortgage Indicator (DFMI) 
+variable set to Y. A list and total of the accounts in the Statement Extract with Dodd-
+Frank Bill Records (MM_STMXT_DFBILLRECS) report is also provided. 
+
+Restrictions 
+
+If a value is not set for the Output File Path (8OUP) parameter, a value must be set for 
+the Extract Target Directory (EXTT) institution option prior to running the report. 
+
+Variables 
+
+The following system- and product-level Loan Bill (BILL) variables control the information 
+included in the statement extract records and cannot be overridden at the account level. 
+
+Variable 
+
+Description 
+
+Expl of Amt Due Indicator (EXIN) 
+
+Indicates whether the Current Payment Due (4220) 
+record populates. 
+
+Yes = Record 4220 populates. 
+
+No = Record 4220 does not populate. 
+
+Loan Activity Section Type (ACTP) 
+
+7 = Populate the Delinquency Statuses (4240) record. 
+
+Past Pymt Breakdown Indicator 
+(PSIN) 
+
+Indicates whether the Past Payment Breakdown (4230) 
+record populates. 
+
+Yes = Record 4230 populates. 
+
+No = Record 4230 does not populate. 
+
+Print Negative Amort Info YN 
+(NAYN) 
+
+Indicates whether the negative amortization information is 
+included in the Customer Information (4200) and Current 
+Payment Due (4220) records, when applicable. 
+
+Yes = Include negative amortization information, when 
+applicable. 
+
+No = Do not include negative amortization information. 
+
+Note: Most institutions use this variable at the product 
+level. 
+
+Totals Section Type (TLTP) 
+
+6 = Populate the disclosure of prepayment penalty and 
+rate change date information in the Customer Information 
+(4200) record 
+
+
+
+ 
+
+
+The following system-level US Regulatory (UREG) variables control the information 
+included in the statement extract records. 
+
+Variable 
+
+Description 
+
+Foreclosure Note Class/SubClass 
+(FRNC) 
+
+Note class code and note subclass code used to select 
+the note with the foreclosure notice text to print on loan 
+bills and notices. The default is null. 
+
+The codes must be entered with the note class code first, 
+followed by a backslash, followed by the note subclass 
+code, e.g., FRCL/TEXT. 
+
+Note: For the text to print on a report or notice, the 
+Foreclosure Text Indicator (FRIN) variable must be set to 
+Y. 
+
+Mitigation Note Class/SubClass 
+(MTNC) 
+
+Note class code and note subclass code used to select 
+the note with the mitigation notice text to print on loan 
+bills and notices. The default is null. 
+
+The codes must be entered with the note class code first, 
+followed by a backslash, followed by the note subclass 
+code, e.g., MITG/TEXT. 
+
+Note: For the text to print on a report or notice, the 
+Mitigation Text Indicator (MTIN) variable must be set to 
+Y. 
+
+
+
+The following product-level Regulatory-US (RGUS) variables control the information 
+included in the statement extract records and can be overridden at the account level. 
+
+Variable 
+
+Description 
+
+Dodd Frank Mortgage Indicator 
+(DFMI) 
+
+Indicates whether the product must comply with the 
+requirements of the Dodd-Frank Act. 
+
+Y = Must comply with Dodd-Frank. 
+
+N = Does not require compliance with Dodd-Frank. 
+Default. 
+
+Note: If DFMI is set to N, accounts in the product are 
+excluded from all Dodd-Frank reporting and warning 
+messages unless there is an account-level override. 
+
+Foreclosure Text Indicator (FRIN) 
+
+Indicates whether the notice text specified by the 
+Foreclosure NoteClass/SubClass (FRNC) variable prints 
+on loan bills and notices. 
+
+Y = Print the notice text. 
+
+N = Do not print the notice text. Default. 
+
+Mitigation Text Indicator (MTIN) 
+
+Indicates whether the notice text specified by the 
+Mitigation NoteClass/SubClass (MTNC) variable prints on 
+loan bills and notices. 
+
+Y = Print the notice text. 
+
+N = Do not print the notice text. Default. 
+
+
+
+ 
+
+
+Parameters 
+
+This report has the following parameters: 
+
+Parameter 
+
+Req’d 
+
+Default 
+
+Description of Value(s) 
+
+Input File Name 
+(IFLE) 
+
+No 
+
+Null 
+
+Name of the output file generated by the 
+Statement Extract (MM_STMXT) report, 
+e.g., MM_STMXT.txt. 
+
+Input File Path 
+(IPTH) 
+
+Yes 
+
+Null 
+
+Location of the output file generated by 
+the Statement Extract (MM_STMXT) 
+report, e.g., C:\TEMP. 
+
+Output File Name 
+(8OFN) 
+
+No 
+
+MM_STMXT_
+DFBILLRECS 
+
+Name of the output file generated by 
+MM_STMXT_DFBILLRECS. 
+
+Output File Path 
+(8OUP) 
+
+No 
+
+Null 
+
+Location of the output file generated by 
+MM_STMXT_DFBILLRECS. If null, the 
+value of the Extract Target Directory 
+(EXTT) institution option is used. 
+
+
+
+Operation 
+
+Run this report after the Statement Extract (MM_STMXT) report when the additional 
+statement records are required. 
+
+The MM_STMXT_DFBILLRECS report selects the MM_STMXT extract file output 
+location path when MM_STMXT is executed before MM_STMXT_DFBILLRECS in the 
+same queue and the IPTH parameter value in MM_STMXT_DFBILLRECS is left blank. If 
+the parameter value is inputted with path details, MM_STMXT_DFBILLRECS selects the 
+MM_STMXT extract file location from that given location irrespective of whether 
+MM_STMXT was in the same queue. 
+
+Output 
+
+The report contains the following information: 
+
+Output 
+
+Description 
+
+Statement Account 
+
+Statement account number. 
+
+Loan Account 
+
+Loan account number. 
+
+Maj/Min 
+
+Major/minor account type codes. 
+
+Name 
+
+Name of the Tax Reported For owner of the account. 
+
+Records in statement 
+extract 
+
+Number of records in the statement extract file. 
+
+
+
+ 
+
+
+Statement Extract Record Layouts 
+
+The Statement Extract file consists of multiple records that can be created separately 
+based on the settings of the applicable variables. Each record is a fixed length. The data 
+included in the report is based on various variable settings and the report parameters. 
+See the “Variables” section above for more information. 
+
+All alphanumeric (AN) fields are left-justified. All numeric (N) fields are right-justified. 
+
+Customer Information (4200) Record 
+
+The Statement Extract with Dodd-Frank Bill Records (MM_STMXT_DFBILLRECS.txt) 
+begins with the Customer Information record that contains account information currently 
+not available in MM_STMXT. 
+
+Pre-Petition Arrearage Information for Bankrupt Borrowers 
+
+The PRE-PETITION CURRENT BALANCE, PRE-PETITION PAID LAST MONTH, and PRE-
+PETITION PAID DURING BANKRUPTCY fields only populate for Chapters 12 and 13. 
+
+The BANKRUPTCY CHAPTER CODE and BANKRUPTCY FILED DATE fields only display when 
+the following conditions exist: 
+
+• The Support Bankruptcy Billing (SBKB) variable is set to Y for the loan account 
+• A person/organization with a non-tax or Tax Reported For owner role on the loan 
+account has an active bankruptcy during the current billing period 
+
+
+The PRE-PETITION CURRENT BALANCE, PRE-PETITION PAID LAST MONTH, PRE-PETITION 
+PAID DURING BANKRUPTCY, TOTAL AMOUNT DUE, and DELINQUENCY TOTAL AMOUNT DUE 
+fields display when the two conditions listed above exist and the CONSUMER CONDITION 
+dropdown list is not set to R-Reaffirmation of Debt at the account or person level. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4200 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary account on 
+the statement. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the account information 
+in this record. 
+
+Prepayment penalty 
+flag 
+
+1 
+
+39 
+
+AN 
+
+Y when a prepayment penalty exists; 
+otherwise, N. 
+
+Note: The Totals Section Type (TLTP) 
+variable must be set to 6 or the Print 
+Negative Amort Info YN (NAYN) variable 
+must set to Y to populate this field. 
+
+Number of Payment 
+Options 
+
+2 
+
+40 
+
+N 
+
+Number of payment options in the 4220 
+record. 
+
+1 = Print Negative Amort Info YN (NAYN) 
+variable is set to N 
+
+3 = NAYN variable is set to Y 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Delinquency Days 
+Late 
+
+4 
+
+42 
+
+N 
+
+Number of days between the extract run 
+and the oldest receivable in the payment 
+sequence. 
+
+Note: The Loan Activity Section Type 
+(ACTP) variable must be set to 7 to 
+populate this field. 
+
+Delinquency 
+Additional Amount 
+
+(prior to 6 months) 
+
+13 
+
+46 
+
+N 
+
+Additional amount delinquent not detailed in 
+record 4240. 
+
+Note: The Loan Activity Section Type 
+(ACTP) variable must be set to 7 to 
+populate this field. 
+
+Delinquency Total 
+Amount Due 
+
+13 
+
+59 
+
+N 
+
+Total delinquency amount due. Post-
+petition amount due if the loan is in Chapter 
+12 or 13 bankruptcy. 
+
+Note: The Loan Activity Section Type 
+(ACTP) variable must be set to 7 to 
+populate this field. 
+
+Next Rate Change 
+Date 
+
+10 
+
+72 
+
+AN 
+
+Date (MM-DD-YYYY) the current rate 
+changes, if applicable. 
+
+Note: The Totals Section Type (TLTP) 
+variable must be set to 6 or the Print 
+Negative Amort Info YN (NAYN) variable 
+must set to Y to populate this field. 
+
+Bankruptcy Chapter 
+Code 
+
+4 
+
+82 
+
+AN 
+
+Bankruptcy types used to identify the 
+specific filing for a person or an 
+organization. Populates for all bankruptcy 
+types (Chapters 7, 11, 12, 13, and 
+undesignated). 
+
+Bankruptcy Filed Date 
+
+10 
+
+86 
+
+AN 
+
+Date the bankruptcy took effect. Populates 
+for all bankruptcy types (Chapters 7, 11, 12, 
+13, and undesignated). 
+
+Pre-Petition Current 
+Balance 
+
+13 
+
+96 
+
+N 
+
+Current balance of the pre-petition 
+bankruptcy for Chapter 12 and 13 
+bankruptcy types. The value is the 
+difference between the total pre-petition 
+due amount and the pre-petition amount 
+paid during bankruptcy. 
+
+Pre-Petition Paid Last 
+Month 
+
+13 
+
+109 
+
+N 
+
+Total payment amount flagged as pre-
+petition (Chapter 12/13 Pre-Petition 
+Payment Indicator (CH13PPTPMT) entity 
+attribute = Y) on or after the last statement 
+date for Chapter 12 and 13 bankruptcy 
+types. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Data 
+Type 
+
+Description 
+
+Pre-Petition Paid 
+During Bankruptcy 
+
+13 
+
+122 
+
+N 
+
+Total payment amount flagged as pre-
+petition (Chapter 12/13 Pre-Petition 
+Payment Indicator (CH13PPTPMT) entity 
+attribute = Y) during bankruptcy for Chapter 
+12 and 13 bankruptcy types. 
+
+Filler 
+
+40 
+
+135 
+
+AN 
+
+Space-filled ending with a pipe sign (|). 
+
+
+
+Current Payment Due (4220) Record 
+
+The Current Payment Due record contains the breakdown of the current payment’s 
+amounts due, past due payments, and fee(s) charged in the current period. The record 
+only populates when the Expl of Amt Due Indicator (EXIN) variable is set to Y. 
+
+Note: The Fixed Due Calc Int on Pmt (FDUE) payment type includes the interest 
+projected from the previous due date to the current due date. Principal is the difference 
+of the payment amount and the interest calculated. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Date 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4200 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary account on 
+the statement. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the account information 
+in this record. 
+
+Payment Option 
+
+1 
+
+39 
+
+N 
+
+For loans without negative amortization: 
+
+1 = Minimum 
+
+For loans with negative amortization, i.e., 
+the Print Negative Amort Info YN (NAYN) 
+variable is set to Y: 
+
+1 = Minimum 
+
+2 = Interest only 
+
+3 = Full 
+
+Principal 
+
+13 
+
+40 
+
+N 
+
+Principal amount. 
+
+Interest 
+
+13 
+
+53 
+
+N 
+
+Interest amount. 
+
+Escrow (Taxes & Ins) 
+
+13 
+
+66 
+
+N 
+
+Escrow (taxes and insurance) amount. 
+
+Regular Monthly 
+Payment 
+
+13 
+
+79 
+
+N 
+
+Regular monthly payment – subtotal of the 
+principal, interest, and escrow due for the 
+current due date. 
+
+Total Fees & 
+Charges 
+
+13 
+
+92 
+
+N 
+
+Total fees and charges during the current 
+period. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Date 
+Type 
+
+Description 
+
+Total Amount Due 
+
+13 
+
+105 
+
+N 
+
+Total amount due – grand total of the 
+regular monthly payment, total fees and 
+charges, and past due amount (4000 
+record). Post-petition amount due if the loan 
+is in Chapter 12 or 13 bankruptcy. 
+
+Note: When the total payment amount is 
+less than zero, the payment amount 
+displays as zero, not as a negative amount. 
+
+Filler 
+
+40 
+
+118 
+
+N 
+
+Space-filled ending with a pipe sign (|). 
+
+
+
+Past Payment Breakdown (4230) Record 
+
+The Past Payment Breakdown record contains the summaries of payments received for 
+the current billing period and the current year to date. The record only populates when 
+the Past Pymt Breakdown Indicator (PSIN) variable is set to Y. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Date 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4230 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary account on 
+the statement. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the account information 
+in this record. 
+
+Current Principal 
+Payment 
+
+13 
+
+39 
+
+N 
+
+Principal amount received for the current 
+period. 
+
+Current Interest 
+Payment 
+
+13 
+
+52 
+
+N 
+
+Interest amount received for the current 
+period. 
+
+Current Escrow 
+Payment 
+
+13 
+
+65 
+
+N 
+
+Escrow amount received for the current 
+period. 
+
+Current Fee(s) 
+Payment 
+
+13 
+
+78 
+
+N 
+
+Fee payment(s) received for the current 
+period. 
+
+Current Partial 
+Payment 
+
+13 
+
+91 
+
+N 
+
+Partial payment received for the current 
+period. 
+
+Current Total 
+Payment 
+
+13 
+
+104 
+
+N 
+
+Total payments received for the current 
+period. 
+
+YTD Principal Paid 
+
+13 
+
+117 
+
+N 
+
+Principal payment(s) received year to date. 
+
+YTD Interest Paid 
+
+13 
+
+130 
+
+N 
+
+Interest payment(s) received year to date. 
+
+YTD Escrow Paid 
+
+13 
+
+143 
+
+N 
+
+Escrow payment(s) received year to date. 
+
+YTD Fees Paid 
+
+13 
+
+156 
+
+N 
+
+Fee payment(s) received year to date. 
+
+YTD Partial Paid 
+
+13 
+
+169 
+
+N 
+
+Partial payment(s) received year to date. 
+
+
+
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Date 
+Type 
+
+Description 
+
+YTD Total Paid 
+
+13 
+
+182 
+
+N 
+
+Total payment(s) received year to date. 
+
+Filler 
+
+40 
+
+195 
+
+N 
+
+Space-filled ending with a pipe sign (|). 
+
+
+
+Delinquency Statuses (4240) Record 
+
+The Delinquency Statuses record contains a record for each receivable currently due 
+and the last one that was paid. The record only populates when the Loan Activity 
+Section Type (ACTP) variable is set to 7. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Date 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4240 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary account on 
+the statement. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the account information 
+in this record. 
+
+Payment Due Date 
+
+10 
+
+39 
+
+AN 
+
+Payment due date (MM-DD-YYYY). 
+
+Payment Status 
+
+50 
+
+49 
+
+AN 
+
+Payment status. 
+
+Amount Due 
+
+13 
+
+99 
+
+N 
+
+Amount due. 
+
+Date Paid 
+
+10 
+
+112 
+
+AN 
+
+Receivable paid date (MM-DD-YYYY). 
+
+Filler 
+
+40 
+
+122 
+
+N 
+
+Space-filled ending with a pipe sign (|). 
+
+
+
+Mitigation and Foreclosure Text (4250) Record 
+
+The Mitigation and Foreclosure Text record only populates when an active note 
+identified by the MTNC and/or FRNC variables exists for the account. When multiple 
+active notes exist, the note with the highest number is selected. The record populates 
+regardless of the value of the Loan Activity Section Type (ACTP) variable. 
+
+Field Name 
+
+Size 
+
+Starting 
+Position 
+
+Date 
+Type 
+
+Description 
+
+Record ID 
+
+4 
+
+1 
+
+N 
+
+4250 
+
+Primary Account 
+Number 
+
+17 
+
+5 
+
+N 
+
+Account number for the primary account on 
+the statement. 
+
+Account Number 
+
+17 
+
+22 
+
+N 
+
+Account number for the account information 
+in this record. 
+
+Mitigation 
+
+500 
+
+39 
+
+AN 
+
+Active mitigation note set in the Mitigation 
+Note Class/SubClass (MTNC) variable. 
+
+Foreclosure 
+
+500 
+
+539 
+
+AN 
+
+Active foreclosure note set in the 
+Foreclosure Note Class/SubClass (FRNC) 
+variable. 
+
+Filler 
+
+40 
+
+1039 
+
+N 
+
+Space-filled ending with a pipe sign (|). 
+
+
+
+ 
+
+
